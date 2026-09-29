@@ -17,7 +17,8 @@
 //const char* MQTT_BROKER = "test.mosquitto.org";
 
 // Configurações do Broker HiveMQ (Usando o broker público oficial)
-const char* MQTT_BROKER   = "broker.hivemq.com";
+//const char* MQTT_BROKER   = "broker.hivemq.com";
+const char* MQTT_BROKER   = "www.tpm.dev.br";
 
 const int   MQTT_PORT     = 1883;
 

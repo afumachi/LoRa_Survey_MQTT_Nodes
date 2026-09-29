@@ -37,8 +37,10 @@ global sf_csv, bw_csv, cr_csv, pw_csv
 
 
 # ===== Configurações MQTT =====
-BROKER        = "broker.hivemq.com"
+#BROKER        = "broker.hivemq.com"
 #BROKER        = "test.mosquitto.org"
+BROKER        = "www.tpm.dev.br"
+
 PORTA_MQTT    = 1883
 
 # MODIFIQUE O TOPIC_DL E TOPIC_UL de acordo com SEU_NOME
