@@ -707,7 +707,7 @@ try:
               medida_atual = medida_atual + 1
               print("### LSS - Medida: ",medida_atual, "de ",quantidade_de_medidas)
 
-              if ((medida_atual) == (quantidade_de_medidas - total_end_devices)): # AAF 23-09-2026
+              if ((medida_atual) > (quantidade_de_medidas - total_end_devices)): # AAF 23-09-2026
                   comanda_mudar_radio = 5  
 
               # =============== Camada de aplicação DL
@@ -730,7 +730,7 @@ try:
 
                     downlink()
                                           
-                    time.sleep(toa_entre_medidas/6)
+                    time.sleep(toa_entre_medidas/10)
 
                     uplink()
 
