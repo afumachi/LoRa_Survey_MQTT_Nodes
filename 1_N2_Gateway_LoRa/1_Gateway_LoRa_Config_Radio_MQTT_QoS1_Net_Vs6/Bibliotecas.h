@@ -3,19 +3,41 @@
 //                     1 - Bibliotecas
 //=======================================================================
 
+
+//#define PK_LORA //#define PKLORA_ESP32
+//#define AAF_LORA // #define AAFLORA_ESP32
+#define PKLORA_NODEMCU //
+
 #include <SPI.h>
 #include <LoRa.h>
-#include <WiFi.h>
-#include <WiFiMulti.h>
-#include <MQTT.h>   // 256dpi/arduino-mqtt -- instalar via Library Manager: "MQTT" by 256dpi
 
-// =====================================================================
-//                     2 - Configurações Wi-Fi
-// =====================================================================
-// Instancia o objeto WiFiMulti
-WiFiMulti wifiMulti;
-// --- Objeto Wi-Fi ---
-WiFiClient wifiClient;
+#if defined(PK_LORA)
+  #include <WiFi.h>
+  #include <WiFiMulti.h>
+
+  // =====================================================================
+  //                     2 - Configurações Wi-Fi
+  // =====================================================================
+  // Instancia o objeto WiFiMulti
+  WiFiMulti wifiMulti;
+
+
+#endif
+
+  #include <MQTT.h>   // 256dpi/arduino-mqtt -- instalar via Library Manager: "MQTT" by 256dpi
+
+#if defined(PKLORA_NODEMCU)
+  #include <ESP8266WiFi.h>
+  #include <ESP8266WiFiMulti.h>
+  //#include <PubSubClient.h>
+
+  // >>> ADICIONE ESTA LINHA AQUI (ANTES DO SETUP) <<<
+  ESP8266WiFiMulti wifiMulti; 
+  
+#endif
+
+  // --- Objeto Wi-Fi ---
+  WiFiClient wifiClient;
 
 //=======================================================================
 //                     4 - Variáveis
@@ -30,8 +52,6 @@ byte PacoteUL[TAMANHO_PACOTE];
 // Taxa de comunicação Serial/USB para Debug
 #define TAXA_SERIAL 115200
 
-//#define PK_LORA //#define PKLORA_ESP32
-#define AAF_LORA // #define AAFLORA_ESP32
 
 #if defined(PK_LORA)
   // ---- DECLARAÇÃO DIAGRAMA DE PINOS DO PROJETO ----
@@ -59,6 +79,20 @@ byte PacoteUL[TAMANHO_PACOTE];
   #define DIO1_PIN  35
   #define DIO2_PIN  34
 
+#elif defined(PKLORA_NODEMCU)
+  // ============= Pinagem na placa da PK-LoRa da ligação do RFM95 com o Node-MCU
+  #define SCK_PIN   14    // PIN D5
+  #define MISO_PIN  12    // PIN D6
+  #define MOSI_PIN  13    // PIN D7
+  #define NSS_PIN   15    // PIN D8
+  #define RST_PIN   0     // PIN D3
+  #define DIO0_PIN  5     // PIN D1
+
+  // ============= CAMADA DE APLICAÇÃO
+  // Pinos dos LEDs
+  #define LED_VERMELHO_PIN  2    // PINO D4
+  #define LED_VERDE_PIN     4    // PINO D2
+  #define LDR_PIN A0   // ADC1_CH0 — sensor LDR - PIN VP
 
 #else
   #error "Por favor, definir a placa de hardware  (PKLORA_ESP32 ou AAF_LORA) no topo deste código!"

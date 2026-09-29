@@ -39,6 +39,8 @@ MQTTClient mqttClient(256);   // buffer de 256 bytes (read/write)
 
 // Cofiguração das redes Wi-Fi 2.4GHz disponíveis
 void conectar_wifi_multi() {
+
+#if defined(PK_LORA)
   // Cadastre quantas redes você quiser (SSID, Senha)
   wifiMulti.addAP("MJCA_FUNDOS", "21092429MJC@");
 
@@ -51,8 +53,16 @@ void conectar_wifi_multi() {
 	wifiMulti.addAP("aafwifi", "aaf12345678");
 	wifiMulti.addAP("CHACARA BBC", "Ailton1960#");
 	wifiMulti.addAP("Claro-EB66", "54b80a7deb66");
+  
+#endif
 
+#if defined(PKLORA_NODEMCU)
+  Serial.println("[Nó Sensor] Falha ao iniciar LoRa. Verifique conexões.");
+  // Registra as redes desejadas (pode adicionar mais de uma)
+  wifiMulti.addAP("MJCA_FUNDOS", "21092429MJC@");
+  wifiMulti.addAP("COLETTI_ADV_CRIS", "45384609");
 
+#endif
 }
 
 // uffer e flag para o pacote DL recebido via MQTT
@@ -65,6 +75,8 @@ unsigned long time_out_lora_ul = 60000UL;  // 1 min. time out Pacote_UL
 
 unsigned long millis_mqtt_controle = 0;
 bool st_led_vermelho = 0;
+
+
 //=======================================================================
 // ------- 3 - Setup de inicialização ---------
 //=======================================================================
@@ -83,6 +95,8 @@ void setup() {
   digitalWrite(PIN_LED_VERDE,    LOW);
 
   conectar_wifi_multi();
+
+
 
   // O wifiMulti.run() tenta conectar a uma das redes cadastradas
   // Ele retorna WL_CONNECTED quando consegue se conectar com sucesso
@@ -106,11 +120,13 @@ void setup() {
   mqttClient.onMessageAdvanced(mqtt_callback);
   conectar_mqtt();
 
+#if defined(PK_LORA)
   // --- Inicialização da Comunicação SPI entre o ESP32 e o Módulo LoRa RFM95 ---
   SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, NSS_PIN);
   delay(20);
   LoRa.setSPI(SPI);
   delay(20);
+#endif
 
   // --- Inicialização da Comunicação LoRa em 915Mhz---
   LoRa.setPins(NSS_PIN, RST_PIN, DIO0_PIN);

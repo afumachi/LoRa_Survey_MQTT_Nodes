@@ -6,19 +6,11 @@
 //#define PKLORA_ESP32 // HARDWARE COM ESP32
 #define PKLORA_NODEMCU // HARDWARE COM ESP12E - NODEMCU
 
+
 //#define GPS_INTEGRADO // MoT 30 Bytes
 #define SEM_GPS // MoT 20 Bytes
 
 
-#if defined(GPS_INTEGRADO)
-  
-  #define TAMANHO_PACOTE 30
-
-#elif defined(SEM_GPS)
-
-  #define TAMANHO_PACOTE 20
-
-#endif
 //=======================================================================
 //                     1 - Bibliotecas
 //=======================================================================

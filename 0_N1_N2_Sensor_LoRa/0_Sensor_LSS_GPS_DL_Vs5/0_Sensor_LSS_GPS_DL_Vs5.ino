@@ -40,6 +40,8 @@
 #define signalBandwidth       500E3    // signal bandwidth in Hz
 #define codingRateDenominator 5        // denominator of the coding rate
 
+#define TAMANHO_PACOTE 20
+
 //#define loraCRC                // Habilita ou disabilita o uso CRC, por padrão o CRC não é usado.
 
 // Váriáveis utilizadas no código
@@ -56,7 +58,7 @@ byte PacoteUL[TAMANHO_PACOTE];
 
 // ============= CAMADA DE REDE
 // Identificação do sensor e tamanho de pacote
-int ID_sensor = 3; // Variável de iIdentificação do sensor que está no pacote de DL byte 8
+int ID_sensor = 2; // Variável de iIdentificação do sensor que está no pacote de DL byte 8
 int ID_gateway = 0;    // Variável com o ID_gateway que estará no pacote de DL byte 10
 
 // ============== CAMADA DE TRANSPORTE
