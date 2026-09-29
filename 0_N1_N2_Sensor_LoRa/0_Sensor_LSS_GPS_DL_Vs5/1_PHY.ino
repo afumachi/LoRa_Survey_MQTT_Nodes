@@ -80,7 +80,7 @@ void Phy_radio_receive_DL() {
           millis_inicio_controle = millis();
           controle_ativo         = true;
 
-          Serial.print("[CONTROLE] Contagem iniciada. Tempo limite: ");
+          Serial.println("[CONTROLE] Contagem iniciada. Tempo limite: ");
           //Serial.print((unsigned long)tempo_radio * 10UL * 1000UL);
           //Serial.println(" ms");
 
@@ -89,7 +89,7 @@ void Phy_radio_receive_DL() {
           // Reinicia a contagem com o novo tempo recebido
           millis_inicio_controle = millis();
 
-          Serial.print("[CONTROLE] Contagem reiniciada. Novo tempo limite: ");
+          Serial.println("[CONTROLE] Contagem reiniciada. Novo tempo limite: ");
           //Serial.print((unsigned long)tempo_radio * 10UL * 1000UL);
           //Serial.println(" ms");
         }

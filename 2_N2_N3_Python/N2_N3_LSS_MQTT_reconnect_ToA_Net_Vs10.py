@@ -306,7 +306,7 @@ def calculo_toa_radio_lora(n_preambulo=8, header_impl=False, crc_on=True, low_dr
 
     print("### Time On Air (ToA [ms]): ", ToA_ms)
     # calcula valor do tempo da comunicação MQTT + entre o Envio do Pacote via LoRa de Downlink + Uplink + Tempo Processamento ESP32 + MQTT
-    valor_tempo = (2*ToA_ms)/1000 #
+    valor_tempo = ((2*ToA_ms))/1000 #
     toa_entre_medidas = max(math.ceil(valor_tempo), 0) #arredonda em segundos o tempo entre medidas
     print("### Valor Tempo Entre Medidas: ", toa_entre_medidas)
 
@@ -730,7 +730,7 @@ try:
 
                     downlink()
                                           
-                    time.sleep(toa_entre_medidas/8)
+                    time.sleep(toa_entre_medidas/6)
 
                     uplink()
 

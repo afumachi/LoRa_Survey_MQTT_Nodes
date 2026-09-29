@@ -1,6 +1,7 @@
 //================ RECEBE O PACOTE DE DL DA CAMADA DE REDE ========
 void Transp_radio_receive_DL() { 
 
+contador_perda_DL = contador_perda_DL + 1;
 /*
   confirma_novo_radio_base = PacoteDL[7]; // Caso Pacote for para este Nó Sensor
   Serial.print("confirma_novo_radio_base = "); // Para Debug
@@ -24,9 +25,12 @@ void Transp_radio_receive_DL() {
 
 //================ ENVIA O PACOTE DE UL À CAMADA DE REDE ========
 void Transp_radio_send_UL() { 
-  if ((recebe_comando_nova_radio == 4) || (recebe_comando_nova_radio == 5)){ 
+
+  //if ((confirma_novo_radio_sensor == 4) || (confirma_novo_radio_sensor == 5)){ 
     contadorUL = contadorUL + 1;  // Incrementa o contador de pacote de UL
-  }
+    Serial.print("contadorUL : ");
+    Serial.println(contadorUL);
+  //}
 
   PacoteUL[12] = contador_perda_DL/256; //PacoteDL[DL_COUNTER_MSB];
   PacoteUL[13] = contador_perda_DL%256; //PacoteDL[DL_COUNTER_LSB];

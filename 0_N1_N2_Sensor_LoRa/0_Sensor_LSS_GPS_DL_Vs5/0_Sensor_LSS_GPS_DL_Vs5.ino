@@ -58,7 +58,7 @@ byte PacoteUL[TAMANHO_PACOTE];
 
 // ============= CAMADA DE REDE
 // Identificação do sensor e tamanho de pacote
-int ID_sensor = 2; // Variável de iIdentificação do sensor que está no pacote de DL byte 8
+int ID_sensor = 1; // Variável de iIdentificação do sensor que está no pacote de DL byte 8
 int ID_gateway = 0;    // Variável com o ID_gateway que estará no pacote de DL byte 10
 
 // ============== CAMADA DE TRANSPORTE
@@ -192,7 +192,7 @@ void loop() {
     unsigned long tempo_limite_ms = (unsigned long)tempo_radio * 100UL * 1000UL; // 10x o valor recebido em MAC3_TEMPO
 
     if (millis() - millis_inicio_controle >= tempo_limite_ms) {
-      reset_para_setup_inicial(); // Timeout atingido → volta ao SETUP
+      //reset_para_setup_inicial(); // Timeout atingido → volta ao SETUP
     }
     millis_inicio_controle = millis();
   }
@@ -204,7 +204,7 @@ void loop() {
     Serial.println("TEMPO SEM RECEBER PACOTES - Time-Out");
     Serial.println("Voltando a Configuração LoRa MDC");
     millis_standby_controle = millis();
-    reset_para_setup_inicial(); // Timeout atingido → volta ao SETUP
+    //reset_para_setup_inicial(); // Timeout atingido → volta ao SETUP
   }     
 
 
