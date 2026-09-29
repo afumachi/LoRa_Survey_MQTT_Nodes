@@ -58,7 +58,7 @@ byte PacoteUL[TAMANHO_PACOTE];
 
 // ============= CAMADA DE REDE
 // Identificação do sensor e tamanho de pacote
-int ID_sensor = 1; // Variável de iIdentificação do sensor que está no pacote de DL byte 8
+int ID_sensor = 2; // Variável de iIdentificação do sensor que está no pacote de DL byte 8
 int ID_gateway = 0;    // Variável com o ID_gateway que estará no pacote de DL byte 10
 
 // ============== CAMADA DE TRANSPORTE
@@ -96,8 +96,8 @@ void setup() {
   pinMode(LDR_PIN, INPUT);
 
   // Garante que os LEDs iniciem desligados
-  digitalWrite(LED_VERMELHO_PIN, LOW);
-  digitalWrite(LED_VERDE_PIN, LOW);
+  digitalWrite(LED_VERMELHO_PIN, HIGH);
+  digitalWrite(LED_VERDE_PIN, HIGH);
 
   #if defined(PKLORA_ESP32)
     digitalWrite(LED_AMARELO_PIN, LOW);
@@ -174,9 +174,9 @@ void setup() {
   #endif
 
   // Pisca o LED Verde para indicar inicialização bem-sucedida
-  digitalWrite(LED_VERDE_PIN, HIGH);
+  //digitalWrite(LED_VERDE_PIN, HIGH);
   delay(1000);
-  digitalWrite(LED_VERDE_PIN, LOW);
+  //digitalWrite(LED_VERDE_PIN, LOW);
 
 } // FIM DO SETUP
 
