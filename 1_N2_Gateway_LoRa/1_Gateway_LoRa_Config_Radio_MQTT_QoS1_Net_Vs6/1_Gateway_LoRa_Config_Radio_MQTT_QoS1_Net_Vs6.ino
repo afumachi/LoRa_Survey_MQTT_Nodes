@@ -5,19 +5,31 @@
 */
 
 //=======================================================================
-//                     1 - Bibliotecas
+// 1 - Escolha do Módulo - ESP32 ou NodeMCU
+//=======================================================================
+
+// Remova o comentário da linha referente ao módulo que você está utilizando e comente a outro
+
+// #define PKLORA_ESP32 // #define PKLORA_ESP32
+// #define AFLORA_ESP32 // #define AFLORA_ESP32 fabricação própria
+#define PKLORA_NODEMCU // #define PKLORA_NODEMCU
+
+//=======================================================================
+// 2 - Biblioteca - chama o arquivo Biblioteca.h
 //=======================================================================
 
 #include "Bibliotecas.h"  // Arquivo contendo declaração de bibliotecas e variáveis
 
 // =====================================================================
-//                     2 - Configurações MQTT
+// 3 - Configurações Broker MQTT
 // =====================================================================
 // Configurações do Broker Mosquitto (Usando o broker público oficial)
-//const char* MQTT_BROKER = "test.mosquitto.org";
+// const char* MQTT_BROKER = "test.mosquitto.org";
 
 // Configurações do Broker HiveMQ (Usando o broker público oficial)
-//const char* MQTT_BROKER   = "broker.hivemq.com";
+// const char* MQTT_BROKER   = "broker.hivemq.com";
+
+// Configurações do Broker Smart TpM (Usando o broker público Smart TpM)
 const char* MQTT_BROKER   = "www.tpm.dev.br";
 
 const int   MQTT_PORT     = 1883;
@@ -29,24 +41,51 @@ const char* TOPIC_DL      = "mot_lora_mqtt_IE350/gateway/downlink";  // Python �
 const char* TOPIC_UL      = "mot_lora_mqtt_IE350/gateway/uplink";    // ESP32  → Python
 String CLIENT_ID ;         // ID único no broker
 
-// QoS usado nos dois sentidos (DL e UL). QoS1 = "at least once": o broker
-// confirma o recebimento (PUBACK) e a biblioteca retransmite se necessário.
-// Importante para o dado do cliente (luminosidade).
-const int MQTT_QOS = 1;
+// QoS usado nos dois sentidos (DL e UL). QoS1 = "at least once"
+// MQTT confirma o recebimento (PUBACK) e a biblioteca retransmite se necessário.
+
+#if defined(PKLORA_ESP32)
+
+  const int MQTT_QOS = 1;
+
+#elif defined(PKLORA_NODEMCU)  
+  
+  // desabilita QoS com NodeMCU devido a exigência de processamento
+  const int MQTT_QOS = 0; 
+
+#endif
 
 // --- Objeto MQTT ---
 MQTTClient mqttClient(256);   // buffer de 256 bytes (read/write)
 
+//=======================================================================
+// 4 - Configuração de Setup de Rádio LoRa
+//=======================================================================
+
+// ============= CAMADA FÍSICA
+// Parâmetros do LoRa
+#define FREQUENCY_IN_HZ       903E6    // LoRa Frequency
+#define txPower               14       // TX power in dBm, defaults to 17
+#define spreadingFactor       7       // ranges from 6-12,default 7
+#define signalBandwidth       500E3    // signal bandwidth in Hz
+#define codingRateDenominator 5        // denominator of the coding rate
+
+#define TAMANHO_PACOTE 20
+
+// Habilita ou disabilita o uso CRC, por padrão o CRC não é usado.
+//#define loraCRC
+
+//=======================================================================
+// 5 - Configuração de Redes Wi-Fi
+//=======================================================================
+
 // Cofiguração das redes Wi-Fi 2.4GHz disponíveis
 void conectar_wifi_multi() {
 
-#if defined(PK_LORA)
   // Cadastre quantas redes você quiser (SSID, Senha)
   wifiMulti.addAP("MJCA_FUNDOS", "21092429MJC@");
 
 	wifiMulti.addAP("2.4G COLETTI", "1145384609");
-
-
 	wifiMulti.addAP("COLETTI_ext", "1145384609");
   wifiMulti.addAP("COLETTI_ADV_CRIS", "45384609");
 
@@ -54,32 +93,16 @@ void conectar_wifi_multi() {
 	wifiMulti.addAP("CHACARA BBC", "Ailton1960#");
 	wifiMulti.addAP("Claro-EB66", "54b80a7deb66");
   
-#endif
-
-#if defined(PKLORA_NODEMCU)
-  Serial.println("[Nó Sensor] Falha ao iniciar LoRa. Verifique conexões.");
-  // Registra as redes desejadas (pode adicionar mais de uma)
-  wifiMulti.addAP("MJCA_FUNDOS", "21092429MJC@");
-  wifiMulti.addAP("COLETTI_ADV_CRIS", "45384609");
-
-#endif
 }
 
 // uffer e flag para o pacote DL recebido via MQTT
 volatile bool mqtt_dl_disponivel = false;
 byte          mqtt_dl_payload[TAMANHO_PACOTE];
 
-// Tempo de controle de standby Pacote_UL
-unsigned long millis_standby_controle = 0; // Marca o instante em que pacote foi recebido
-unsigned long time_out_lora_ul = 60000UL;  // 1 min. time out Pacote_UL
-
-unsigned long millis_mqtt_controle = 0;
-bool st_led_vermelho = 0;
-
-
 //=======================================================================
-// ------- 3 - Setup de inicialização ---------
+// 6 - Setup de inicialização 
 //=======================================================================
+
 // Inicializa as camadas
 void setup() {
   //================= INICIALIZA SERIAL E MÓDULO RF95
@@ -89,14 +112,12 @@ void setup() {
   delay(20);
 
   // declara Leds como saídas digital do ESP32
-  pinMode(PIN_LED_VERMELHO, OUTPUT);
-  pinMode(PIN_LED_VERDE, OUTPUT);
-  digitalWrite(PIN_LED_VERMELHO, LOW);
-  digitalWrite(PIN_LED_VERDE,    LOW);
+  pinMode(LED_VERMELHO_PIN, OUTPUT);
+  pinMode(LED_VERDE_PIN, OUTPUT);
+  digitalWrite(LED_VERMELHO_PIN, LOW);
+  digitalWrite(LED_VERDE_PIN,    LOW);
 
   conectar_wifi_multi();
-
-
 
   // O wifiMulti.run() tenta conectar a uma das redes cadastradas
   // Ele retorna WL_CONNECTED quando consegue se conectar com sucesso
@@ -120,13 +141,13 @@ void setup() {
   mqttClient.onMessageAdvanced(mqtt_callback);
   conectar_mqtt();
 
-#if defined(PK_LORA)
-  // --- Inicialização da Comunicação SPI entre o ESP32 e o Módulo LoRa RFM95 ---
-  SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, NSS_PIN);
-  delay(20);
-  LoRa.setSPI(SPI);
-  delay(20);
-#endif
+  #if defined(PKLORA_ESP32)
+    // --- Inicialização da Comunicação SPI entre o ESP32 e o Módulo LoRa RFM95 ---
+    SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, NSS_PIN);
+    delay(20);
+    LoRa.setSPI(SPI);
+    delay(20);
+  #endif
 
   // --- Inicialização da Comunicação LoRa em 915Mhz---
   LoRa.setPins(NSS_PIN, RST_PIN, DIO0_PIN);
@@ -135,21 +156,22 @@ void setup() {
     while (true); // Trava se o LoRa falhar
   }
 
+  delay(1000);
   //  --- Atua Led vermelho  --- 
-  digitalWrite(PIN_LED_VERMELHO, LOW); // LIGA LED VERMELHO - INDIFERENTE PARA O BOOT
+  digitalWrite(LED_VERMELHO_PIN, LOW); // LIGA LED VERMELHO - INDIFERENTE PARA O BOOT
 
   //  --- Atua Led verde  --- 
-  digitalWrite(PIN_LED_VERDE, LOW);  // DESLIGA O LED VERDE - DEVE SER LOW DURANTE BOOT
+  digitalWrite(LED_VERDE_PIN, LOW);  // DESLIGA O LED VERDE - DEVE SER LOW DURANTE BOOT
 
   // Aguarda 1 segundo para estabilização
-  delay(100);
+  delay(1000);
 
   //  --- Pisca Led verde  --- Sucesso ao Iniciar 
-  digitalWrite(PIN_LED_VERMELHO, HIGH);  // DESLIGA O LED VERDE - DEVE SER LOW DURANTE BOOT
-  digitalWrite(PIN_LED_VERDE, HIGH);  // 
+  digitalWrite(LED_VERMELHO_PIN, HIGH);  // DESLIGA O LED VERDE - DEVE SER LOW DURANTE BOOT
+  digitalWrite(LED_VERDE_PIN, HIGH);  // 
   delay(1000);
-  digitalWrite(PIN_LED_VERMELHO, LOW); 
-  digitalWrite(PIN_LED_VERDE, LOW);  //
+  digitalWrite(LED_VERMELHO_PIN, LOW); 
+  digitalWrite(LED_VERDE_PIN, LOW);  //
 
   #ifdef loraCRC   // Habilitação do CRC do chip lora  (Configurado em bibliotecas.h)
     LoRa.enableCrc();
@@ -193,12 +215,12 @@ void loop() {
   }
   else{
     if (    st_led_vermelho == 1){
-      digitalWrite(PIN_LED_VERMELHO, HIGH);
-      digitalWrite(PIN_LED_VERDE, HIGH);
+      digitalWrite(LED_VERMELHO_PIN, HIGH);
+      digitalWrite(LED_VERDE_PIN, HIGH);
     }
     else{
-      digitalWrite(PIN_LED_VERMELHO, LOW);
-      digitalWrite(PIN_LED_VERDE, LOW);
+      digitalWrite(LED_VERMELHO_PIN, LOW);
+      digitalWrite(LED_VERDE_PIN, LOW);
     }
   }
   mqttClient.loop();   // processa envio/recebimento e handshakes de QoS1/2

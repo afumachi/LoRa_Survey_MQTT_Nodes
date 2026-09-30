@@ -1,28 +1,25 @@
-// ESCOLHA DO HARDWARE PKLORA ESP32 OU NODEMCU
-
-// Hardware - Configuração da Seleção do Tipo de Hardware (ESP32 ou NODEMCU)
-// Remova o comentário da linha referente à placa que você está usando no momento e comente a outra
-
-//#define PKLORA_ESP32 // HARDWARE COM ESP32
-#define PKLORA_NODEMCU // HARDWARE COM ESP12E - NODEMCU
-
-
-//#define GPS_INTEGRADO // MoT 30 Bytes
-#define SEM_GPS // MoT 20 Bytes
-
 
 //=======================================================================
-//                     1 - Bibliotecas
+// 1 - Bibliotecas
 //=======================================================================
+
+// Bibliotecas comuns para os Hardwares ESP32 e NodeMCU
+
+#include <SPI.h>  // A SPI é usada para conectar o Módulo de Processamento ao RFM95
+#include <LoRa.h> // Biblioteca do Módulo de Rádio LoRa RFM95W
+
 #if defined(GPS_INTEGRADO)
-    #include <Wire.h>           // Inclui a Biblioteca Wire para Oled
-    #include <Adafruit_GFX.h>   // Inclui a Biblioteca GFX para Oled 
-    #include <Adafruit_SSD1306.h> // Inclui a Biblioteca OLED SSD1306
-    //#include <DHT.h>            // Inclui a Biblioteca DHT
-    #include <TinyGPS++.h>      // Inclui a Biblioteca GPS
+    #include <Wire.h>              // Inclui a Biblioteca Wire para Oled
+    #include <Adafruit_GFX.h>      // Inclui a Biblioteca GFX para Oled 
+    #include <Adafruit_SSD1306.h>  // Inclui a Biblioteca OLED SSD1306
+    //#include <DHT.h>             // Inclui a Biblioteca para Sensor DHT22 temperatura e humidade
+    #include <TinyGPS++.h>         // Inclui a Biblioteca GPS
 #endif
 
-// 3 - Variáveis e Mapeamento Pinout
+//=======================================================================
+// 2 - Mapeamento dos Pinos
+//=======================================================================
+
 #if defined(PKLORA_ESP32)
   // ============= Pinagem na placa da PK-LoRa da ligação do RFM95 com o ESP32
   #define SCK_PIN   5
@@ -65,17 +62,17 @@
 
 #if defined(GPS_INTEGRADO)
 
-/*
-// Pinos sensor de temperatura e umidade DHT22 AM2302
-#define DHTPIN 13     // Define o pino de dados para o sensor DHT
-#define DHTTYPE DHT22   // Especifica o tipo do sensor como DHT22
+  /*
+  // Pinos sensor de temperatura e umidade DHT22 AM2302
+  #define DHTPIN 13     // Define o pino de dados para o sensor DHT
+  #define DHTTYPE DHT22   // Especifica o tipo do sensor como DHT22
 
-// Inicializa o sensor DHT
-DHT dht(DHTPIN, DHTTYPE);
-unsigned long millis_dht22_controle = 0;
-float temperatura, umidade;
+  // Inicializa o sensor DHT
+  DHT dht(DHTPIN, DHTTYPE);
+  unsigned long millis_dht22_controle = 0;
+  float temperatura, umidade;
 
-*/
+  */
 
   // OLED configuration
   #define SCREEN_WIDTH 128 
@@ -92,8 +89,6 @@ float temperatura, umidade;
   bool gps_satelite = false;
 
 #endif
-
-// Váriáveis utilizadas no código
 
 // # Configuração Atual Rádio LoRa
 int valor_atual_spreadingfactor = 12; // # Spreading Factor inicial = Maior espalhamento possível 12 (de 7 a 12)

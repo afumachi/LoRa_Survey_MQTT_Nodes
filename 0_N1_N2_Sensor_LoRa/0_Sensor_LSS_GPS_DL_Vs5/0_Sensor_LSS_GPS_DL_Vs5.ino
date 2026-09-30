@@ -1,8 +1,28 @@
 /*
   MoT LoRa Site Survey Versão Configura Rádio | WissTek IoT
-  Última versão: Branquinho / Felipe / Anderson
-  Hardware: PKLoRa ESP32
+  Última versão: Branquinho / Anderson
+  Hardware: PKLoRa ESP32 ou PKLoRa NodeMCU
+  Nó Sensor - 
 */
+
+//=======================================================================
+// 1 - Escolha do Módulo - ESP32 ou NodeMCU
+//=======================================================================
+
+// Remova o comentário da linha referente ao módulo que você está utilizando e comente a outro
+
+//#define PKLORA_ESP32 // HARDWARE COM ESP32
+#define PKLORA_NODEMCU // HARDWARE COM ESP12E - NODEMCU
+
+// Caso tenha sensor GPS integrado ao Módulo
+#define SEM_GPS // MoT 20 Bytes
+//#define GPS_INTEGRADO // MoT 30 Bytes
+
+//=======================================================================
+// 2 - Biblioteca - chama o arquivo Biblioteca.h
+//=======================================================================
+
+#include "Bibliotecas.h"  // Arquivo contendo declaração de bibliotecas e variáveis
 
 /*
 // Máquina de Estado_DL:
@@ -21,16 +41,8 @@
 */
 
 //=======================================================================
-//                     1 - Bibliotecas
+// 3 - Configuração de Setup de Rádio LoRa
 //=======================================================================
-#include <SPI.h> // A SPI é usada para conectar o ESP32 com o RFM95
-#include <LoRa.h> // Biblioteca do RFM95
-#include "Bibliotecas.h"  // Arquivo contendo declaração de bibliotecas e variáveis
-
-//=======================================================================
-//                     2 - Variáveis e Mapeamento
-//=======================================================================
-
 
 // ============= CAMADA FÍSICA
 // Parâmetros do LoRa
@@ -42,7 +54,8 @@
 
 #define TAMANHO_PACOTE 20
 
-//#define loraCRC                // Habilita ou disabilita o uso CRC, por padrão o CRC não é usado.
+// Habilita ou disabilita o uso CRC, por padrão o CRC não é usado.
+//#define loraCRC
 
 // Váriáveis utilizadas no código
 int RSSI_dBm_DL; // Variável com a potência rádio recebida (RSSI) em dBm
@@ -58,7 +71,7 @@ byte PacoteUL[TAMANHO_PACOTE];
 
 // ============= CAMADA DE REDE
 // Identificação do sensor e tamanho de pacote
-int ID_sensor = 2; // Variável de iIdentificação do sensor que está no pacote de DL byte 8
+int ID_sensor = 1; // Variável de iIdentificação do sensor que está no pacote de DL byte 8
 int ID_gateway = 0;    // Variável com o ID_gateway que estará no pacote de DL byte 10
 
 // ============== CAMADA DE TRANSPORTE
@@ -72,7 +85,7 @@ int luminosidade; // Variável que vai receber o valor da luminosidade entre 0 e
 uint8_t feedback_led_amarelo = 0;
 
 //=======================================================================
-// ------- 3 - Setup de inicialização ---------
+// 4 - Setup de inicialização
 //=======================================================================
 // Inicializa as camadas
 void setup() {
@@ -181,7 +194,7 @@ void setup() {
 } // FIM DO SETUP
 
 //=======================================================================
-//  ------------ 4 - Loop de repetição ------------
+//  5 - Loop de repetição
 //=======================================================================
 // A função loop irá executar repetidamente
 void loop() {

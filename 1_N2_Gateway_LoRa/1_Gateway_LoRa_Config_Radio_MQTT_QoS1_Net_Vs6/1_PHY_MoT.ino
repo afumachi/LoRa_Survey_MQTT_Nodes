@@ -97,8 +97,8 @@ void Phy_mqtt_receive_DL() {
 void Phy_radio_send_DL() {
 
   // Pisca o LED de transmissão de pacote DL
-  digitalWrite(PIN_LED_VERMELHO, HIGH);  // Início da Transmissão
-  digitalWrite(PIN_LED_VERDE, HIGH);  // Início da Transmissão
+  digitalWrite(LED_VERMELHO_PIN, HIGH);  // Início da Transmissão
+  digitalWrite(LED_VERDE_PIN, HIGH);  // Início da Transmissão
 
   LoRa.sleep();
   LoRa.setSpreadingFactor(valor_novo_spreadingfactor);
@@ -113,8 +113,8 @@ void Phy_radio_send_DL() {
   LoRa.endPacket();  // finish packet and send it
 
   // Pisca o LED de transmissão de pacote DL
-  digitalWrite(PIN_LED_VERMELHO, LOW);  // FIM da Transmissão
-  digitalWrite(PIN_LED_VERDE, LOW);  // Início da Transmissão
+  digitalWrite(LED_VERMELHO_PIN, LOW);  // FIM da Transmissão
+  digitalWrite(LED_VERDE_PIN, LOW);  // Início da Transmissão
 
 }
 
@@ -132,8 +132,8 @@ void Phy_radio_receive_UL() {
   // Caso positivo, identifica o tamanho do Payload do Pacote
   if (packetSize) {
 
-    digitalWrite(PIN_LED_VERDE, HIGH);  // Apaga Led Verde Indicando Inicio da leitura do Pacote
-    digitalWrite(PIN_LED_VERMELHO, HIGH);  // FIM da Transmissão
+    digitalWrite(LED_VERDE_PIN, HIGH);  // Apaga Led Verde Indicando Inicio da leitura do Pacote
+    digitalWrite(LED_VERMELHO_PIN, HIGH);  // FIM da Transmissão
 
     // Realiza a leitura caso Payload do Pacote seja compatível com o Pacote de 52 Bytes
     if (packetSize >= TAMANHO_PACOTE) {
@@ -153,8 +153,8 @@ void Phy_radio_receive_UL() {
       //===================== QUANDO A BASE  VERIFICA O ENDENREÇO DE DESTINO O PACOTE SÓ É ENVIADO PARA A SERIAL CASO A BASE SEJA O DESTINATÁRIO - nesse caso descomentar o bloco abaixo
       // Esta é uma função originalmente da camada de rede, mas existe um cross-layer para verificação do endereço de destino, recebendo somente os pacotes que são destinados para a base
   
-      digitalWrite(PIN_LED_VERDE, LOW);  // Fim da leitura do Pacote
-      digitalWrite(PIN_LED_VERMELHO, LOW);  // FIM da Transmissão
+      digitalWrite(LED_VERDE_PIN, LOW);  // Fim da leitura do Pacote
+      digitalWrite(LED_VERMELHO_PIN, LOW);  // FIM da Transmissão
       //Serial.println("Pacote UPLINK Recebido");
 
       // Garante que Nó Sensor também recebeu comando de alteração de rádio e confirmou

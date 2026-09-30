@@ -180,6 +180,7 @@ void Phy_radio_send_UL() {
   //digitalWrite(LED_VERMELHO_PIN, HIGH); // Início da Transmissão
 
   LoRa.beginPacket();                 // Inicia o envio do pacote ao rádio
+  
   for (int i = 0; i < TAMANHO_PACOTE; i++) {
     LoRa.write(PacoteUL[i]);          // Envia byte a byte as informações para o Rádio
   }

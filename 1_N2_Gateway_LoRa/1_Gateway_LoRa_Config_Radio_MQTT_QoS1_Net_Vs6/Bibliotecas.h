@@ -1,37 +1,31 @@
     
 //=======================================================================
-//                     1 - Bibliotecas
+// 1 - Bibliotecas
 //=======================================================================
 
-
-//#define PK_LORA //#define PKLORA_ESP32
-//#define AAF_LORA // #define AAFLORA_ESP32
-#define PKLORA_NODEMCU //
-
+// Bibliotecas comuns para os Hardwares ESP32 e NodeMCU
 #include <SPI.h>
 #include <LoRa.h>
+#include <MQTT.h>   // 256dpi/arduino-mqtt -- instalar via Library Manager: "MQTT" by 256dpi
 
-#if defined(PK_LORA)
+//=======================================================================
+// 2 - Mapeamento dos Pinos
+//=======================================================================
+
+#if defined(PKLORA_ESP32)
   #include <WiFi.h>
   #include <WiFiMulti.h>
 
-  // =====================================================================
-  //                     2 - Configurações Wi-Fi
-  // =====================================================================
-  // Instancia o objeto WiFiMulti
+  // Instancia o objeto WiFiMulti para ESP32
   WiFiMulti wifiMulti;
 
-
 #endif
-
-  #include <MQTT.h>   // 256dpi/arduino-mqtt -- instalar via Library Manager: "MQTT" by 256dpi
 
 #if defined(PKLORA_NODEMCU)
   #include <ESP8266WiFi.h>
   #include <ESP8266WiFiMulti.h>
-  //#include <PubSubClient.h>
 
-  // >>> ADICIONE ESTA LINHA AQUI (ANTES DO SETUP) <<<
+  // Instancia o objeto WiFiMulti para NodeMCU
   ESP8266WiFiMulti wifiMulti; 
   
 #endif
@@ -40,7 +34,7 @@
   WiFiClient wifiClient;
 
 //=======================================================================
-//                     4 - Variáveis
+// 3 - Variáveis
 //=======================================================================
 // Identificação do Nó Sensor e Tamanho de Pacote
 
@@ -53,7 +47,7 @@ byte PacoteUL[TAMANHO_PACOTE];
 #define TAXA_SERIAL 115200
 
 
-#if defined(PK_LORA)
+#if defined(PKLORA_ESP32)
   // ---- DECLARAÇÃO DIAGRAMA DE PINOS DO PROJETO ----
   // Pinos utilizados para comunicação SPI entre ESP32 e RFM95 - Módulo LoRa
 
@@ -67,7 +61,11 @@ byte PacoteUL[TAMANHO_PACOTE];
   #define DIO1_PIN  35
   #define DIO2_PIN  34
 
-#elif defined(AAF_LORA)
+  // Pinos dos LEDs
+  #define LED_VERMELHO_PIN  15    // PINO 15
+  #define LED_VERDE_PIN     4    // PINO 4
+
+#elif defined(AFLORA_ESP32)
 
   // ============= Pinagem na placa da PK-LoRa da ligação do RFM95 com o ESP32
   #define SCK_PIN   18
@@ -79,6 +77,10 @@ byte PacoteUL[TAMANHO_PACOTE];
   #define DIO1_PIN  35
   #define DIO2_PIN  34
 
+  // Pinos dos LEDs
+  #define LED_VERMELHO_PIN  15    // PINO 15
+  #define LED_VERDE_PIN     4    // PINO 4
+
 #elif defined(PKLORA_NODEMCU)
   // ============= Pinagem na placa da PK-LoRa da ligação do RFM95 com o Node-MCU
   #define SCK_PIN   14    // PIN D5
@@ -88,29 +90,13 @@ byte PacoteUL[TAMANHO_PACOTE];
   #define RST_PIN   0     // PIN D3
   #define DIO0_PIN  5     // PIN D1
 
-  // ============= CAMADA DE APLICAÇÃO
   // Pinos dos LEDs
   #define LED_VERMELHO_PIN  2    // PINO D4
   #define LED_VERDE_PIN     4    // PINO D2
-  #define LDR_PIN A0   // ADC1_CH0 — sensor LDR - PIN VP
 
 #else
   #error "Por favor, definir a placa de hardware  (PKLORA_ESP32 ou AAF_LORA) no topo deste código!"
 #endif
-
-// --- 2. Definição de Pinos (Hardware) ---
-#define PIN_LED_VERMELHO 15 // Status ENVIO por RF
-#define PIN_LED_VERDE 4     // Status de RECEBIMENTO por RF
-#define PIN_LDR 36          // Sensor (APP)
-#define PIN_BOTAO 39        // Botão do Nó Sensor
-
-// --- Configuração Rádio LoRa ---
-#define FREQUENCY_IN_HZ 903E6    // Frequência do Canal LoRa (ex: 915MHz)
-#define txPower 20               // Potência de Transmissão (dBm) [2 a 20 - padrão 14]
-#define spreadingFactor 7       // Fator de Espalhamento - range de [6-12, padrão 7]
-#define signalBandwidth 500E3    // Banda do Sinal [125E3 | 250E3 | 500E3]
-#define codingRateDenominator 5  // Coding Rate (4/5) [4/6 | 4/7 | 4/8 | 4/5 |]
-//#define loraCRC                // Habilita ou disabilita o uso CRC, por padrão o CRC não é usado.
 
 // Váriáveis utilizadas no código
 uint16_t contadorUL = 0;
@@ -175,6 +161,12 @@ uint8_t recebe_comando_nova_radio = 0;       // Comando recebido em MAC4_COMANDO
 unsigned long millis_inicio_aguarda_UL = 0;  // Marca o instante em que o DL com COMANDO 4 foi enviado
 bool aguardando_confirmacao_UL = false;       // Flag: gateway está aguardando UL de confirmação do sensor
 
+// Tempo de controle de standby Pacote_UL
+unsigned long millis_standby_controle = 0; // Marca o instante em que pacote foi recebido
+unsigned long time_out_lora_ul = 60000UL;  // 1 min. time out Pacote_UL
+
+unsigned long millis_mqtt_controle = 0;
+bool st_led_vermelho = 0;
 
   // adicionar um conjunto de variáveis PKT_UL e PKT_DL para deixar os pacotes independentes
 
