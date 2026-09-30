@@ -68,7 +68,7 @@ MQTTClient mqttClient(256);   // buffer de 256 bytes (read/write)
 #define txPower               20       // TX power in dBm, defaults to 17
 #define spreadingFactor       7       // ranges from 6-12,default 7
 #define signalBandwidth       500E3    // signal bandwidth in Hz
-#define codingRateDenominator 5        // denominator of the coding rate
+#define codingRateDenominator 8        // denominator of the coding rate
 
 #define TAMANHO_PACOTE 20
 
@@ -98,6 +98,31 @@ void conectar_wifi_multi() {
 // uffer e flag para o pacote DL recebido via MQTT
 volatile bool mqtt_dl_disponivel = false;
 byte          mqtt_dl_payload[TAMANHO_PACOTE];
+
+
+
+
+// 1. Criamos uma estrutura para expor o ponteiro de função privada em tempo de compilação
+template<typename Tag, typename Tag::type M>
+struct ObtorPrivado {
+  friend typename Tag::type pegar_metodo(Tag) { return M; }
+};
+
+struct LoRaReadRegTag {
+  typedef uint8_t (LoRaClass::*type)(uint8_t);
+  friend type pegar_metodo(LoRaReadRegTag);
+};
+
+// Força a instanciação do ponteiro para a função privada burlando o acesso
+template struct ObtorPrivado<LoRaReadRegTag, &LoRaClass::readRegister>;
+
+// 2. Esta é a função que você chamará no seu código
+uint8_t lerRegistradorLoRa(uint8_t endereco) {
+  auto metodo_privado = pegar_metodo(LoRaReadRegTag());
+  return (LoRa.*metodo_privado)(endereco);
+}
+
+
 
 //=======================================================================
 // 6 - Setup de inicialização 
@@ -240,5 +265,50 @@ void loop() {
     millis_standby_controle = millis();
     //reset_gateway_para_setup_inicial(); // Timeout atingido → volta ao SETUP
   }  
+
+
+  // Imprime Radio Config a cada 10 [s]
+  unsigned long tempo_loop_ms = 10000UL;  
+
+  if (millis() - millis_radio_control >= tempo_loop_ms) {        
+
+    // 1. Lê diretamente a memória do chip usando a função bypass
+    uint8_t regModemConfig1 = lerRegistradorLoRa(0x1D); // Controla Bandwidth e Coding Rate
+    uint8_t regModemConfig2 = lerRegistradorLoRa(0x1E); // Controla Spreading Factor
+
+    // 2. Processamento matemático dos bits (Máscaras de bits para o chip SX127x)
+    int sfAtual = regModemConfig2 >> 4; 
+    int crAtual = ((regModemConfig1 & 0x0E) >> 1) + 4; // Extrai o Coding Rate (Retorna 5 para 4/5, 6 para 4/6...)
+
+    // 3. Extração do Bandwidth (Bits 7-4 do reg 0x1D)
+    uint8_t bwCodigo = regModemConfig1 >> 4;
+    float bwRealkHz = 0;
+    switch (bwCodigo) {
+      case 0: bwRealkHz = 7.8;   break;
+      case 1: bwRealkHz = 10.4;  break;
+      case 2: bwRealkHz = 15.6;  break;
+      case 3: bwRealkHz = 20.8;  break;
+      case 4: bwRealkHz = 31.25; break;
+      case 5: bwRealkHz = 41.7;  break;
+      case 6: bwRealkHz = 62.5;  break;
+      case 7: bwRealkHz = 125.0; break;
+      case 8: bwRealkHz = 250.0; break;
+      case 9: bwRealkHz = 500.0; break;
+    }
+
+    // 4. Impressão limpa no Serial Monitor
+    Serial.println(F("\n====== DADOS DO REGISTRADOR EM TEMPO REAL ======"));
+    Serial.print(F("Spreading Factor (SF): ")); Serial.println(sfAtual);
+    Serial.print(F("Bandwidth (BW):        ")); Serial.print(bwRealkHz); Serial.println(F(" kHz"));
+    Serial.print(F("Coding Rate (CR):      4/")); Serial.println(crAtual);
+    Serial.println(F("================================================"));
+
+  // Zera contagem do tempo de controle MQTT para tempo de ESP32 rodando
+  millis_radio_control = millis(); 
+
+  }
+
+
+
 
 }
