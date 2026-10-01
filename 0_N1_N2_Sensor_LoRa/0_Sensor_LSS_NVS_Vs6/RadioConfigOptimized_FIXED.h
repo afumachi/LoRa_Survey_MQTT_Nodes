@@ -63,7 +63,7 @@ const RadioConfig RADIO_CONFIG_LUT[72] PROGMEM = {
  
     // ===== SF=12 (Índices 60-71) - MÁXIMA DISTÂNCIA =====
     // BW=125kHz (Índices 60-63): CR 5,6,7,8
-    {12, 125000, 8}, {12, 125000, 6}, {12, 125000, 7}, {12, 125000, 5},
+    {12, 125000, 5}, {12, 125000, 6}, {12, 125000, 7}, {12, 125000, 8},
     // BW=250kHz (Índices 64-67): CR 5,6,7,8
     {12, 250000, 5}, {12, 250000, 6}, {12, 250000, 7}, {12, 250000, 8},
     // BW=500kHz (Índices 68-71): CR 5,6,7,8
@@ -215,6 +215,7 @@ RadioConfigNVS radioConfigManager;  // Instância global
  * Deve ser chamada em Phy_radio_send_UL() após PacoteUL ser enviado
  */
 void applyRadioConfigByIndex(uint8_t index) {
+    
     RadioConfig config = radioConfigManager.getConfig(index);
     
     Serial.printf("[RADIO] Aplicando configuração - SF:%d, BW:%ld Hz, CR:4/%d\n",

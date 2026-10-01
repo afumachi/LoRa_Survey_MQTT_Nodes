@@ -68,7 +68,7 @@ MQTTClient mqttClient(256);   // buffer de 256 bytes (read/write)
 #define txPower               20       // TX power in dBm, defaults to 17
 #define spreadingFactor       7       // ranges from 6-12,default 7
 #define signalBandwidth       500E3    // signal bandwidth in Hz
-#define codingRateDenominator 8        // denominator of the coding rate
+#define codingRateDenominator 5        // denominator of the coding rate
 
 #define TAMANHO_PACOTE 20
 

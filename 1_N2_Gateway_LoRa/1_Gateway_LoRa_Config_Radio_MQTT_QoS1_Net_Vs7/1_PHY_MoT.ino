@@ -41,7 +41,7 @@ void Phy_mqtt_receive_DL() {
 
       // ADICIONADO Variáveis de recebimento do valores de rádio LoRa
 
-    #if defined(PKLORA_ESP32)
+    //#if defined(PKLORA_ESP32)
       // Recebe o índice de configuração (0-71) do PacoteDL[0]
       uint8_t radio_config_index = PacoteDL[0];
 
@@ -52,7 +52,7 @@ void Phy_mqtt_receive_DL() {
           Serial.printf("[PHY MQTT RX] Índice de configuração recebido: %d\n", radio_config_index);
       } else {
           Serial.printf("[PHY MQTT RX] Índice INVÁLIDO recebido: %d (máximo: 71)\n", radio_config_index);
-          radio_config_index = 63;  // Fallback para configuração padrão LONG Range
+          radio_config_index = 8;  // Fallback para configuração padrão SHORT Range
       }
 
       // Estrutura temporária para carregar os dados salvos na memória Flash (PROGMEM)
@@ -65,7 +65,7 @@ void Phy_mqtt_receive_DL() {
       valor_novo_spreadingfactor = config_atual.sf;
       valor_novo_bandwidth       = config_atual.bw;
       valor_novo_codingrate      = config_atual.cr;
-
+/*
     #endif
 
     #if defined(PKLORA_NODEMCU)
@@ -74,16 +74,17 @@ void Phy_mqtt_receive_DL() {
 
       // 2. Trava de segurança para não acessar índice fora da tabela (0 a 71)
       if (radio_config_index >= 72) {
-        radio_config_index = 63; // Fallback seguro (ex: SF12, BW125k, CR8)
+        radio_config_index = 8; // Fallback seguro (ex: SF7, BW500k, CR5)
       }
 
       // 3. Leitura Direta (O ESP cuida da busca na Flash automaticamente)
       valor_novo_spreadingfactor = RADIO_CONFIG_LUT[radio_config_index].sf;
       valor_novo_bandwidth       = RADIO_CONFIG_LUT[radio_config_index].bw;
       valor_novo_codingrate      = RADIO_CONFIG_LUT[radio_config_index].cr;
+
     #endif
 
-/*
+
 // Exemplo Alternativo Sem memcpy_P (Leitura Direta de Bytes)
 // Caso prefira ler campo a campo utilizando macros específicas do AVR (pgm_read_byte e pgm_read_dword):
 

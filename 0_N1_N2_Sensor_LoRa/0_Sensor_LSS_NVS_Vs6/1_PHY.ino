@@ -59,7 +59,7 @@ void Phy_radio_receive_DL() {
       // ADICIONADO Variáveis de recebimento do valores de rádio LoRa
 
       // NOVO: Recebe índice de configuração (0-71) em PacoteDL[0]
-      uint8_t radio_config_index = PacoteDL[0];
+      radio_config_index = PacoteDL[1];
 
       // Valida índice
       if (radio_config_index <= 71) {
@@ -288,7 +288,7 @@ void AplicarConfiguracoesRadio() {
     applyRadioConfigByIndex(radio_config_index);
     LoRa.setTxPower(valor_novo_potencia_radio);                       // Potência de Transmissão (Configurado em bibliotecas.h)
     LoRa.idle(); // Retorna ao modo standby/recepção
-
+    Serial.printf("[MAC] Índice de Reconfiguração : %d\n", radio_config_index);
     // Limpa flags da máquina de estado
     confirma_novo_radio_sensor = 0;
     confirma_novo_radio_base = 10;
