@@ -17,7 +17,7 @@
 // 2 - Mapeamento dos Pinos
 //=======================================================================
 
-#if defined(PKLORA_ESP32)
+#if defined(PKLORA_ESP32) || defined(AFLORA_ESP32)
   #include <WiFi.h>
   #include <WiFiMulti.h>
 
@@ -52,7 +52,7 @@ byte PacoteUL[TAMANHO_PACOTE];
 #define TAXA_SERIAL 115200
 
 
-#if defined(PKLORA_ESP32)
+#if defined(PKLORAA_ESP32)
   // ---- DECLARAÇÃO DIAGRAMA DE PINOS DO PROJETO ----
   // Pinos utilizados para comunicação SPI entre ESP32 e RFM95 - Módulo LoRa
 
@@ -69,7 +69,7 @@ byte PacoteUL[TAMANHO_PACOTE];
   // Pinos dos LEDs
   #define LED_VERMELHO_PIN  15    // PINO 15
   #define LED_VERDE_PIN     4    // PINO 4
-
+  
 #elif defined(AFLORA_ESP32)
 
   // ============= Pinagem na placa da PK-LoRa da ligação do RFM95 com o ESP32

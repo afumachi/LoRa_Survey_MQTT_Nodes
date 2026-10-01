@@ -10,9 +10,9 @@
 
 // Remova o comentário da linha referente ao módulo que você está utilizando e comente a outro
 
-// #define PKLORA_ESP32 // #define PKLORA_ESP32
-// #define AFLORA_ESP32 // #define AFLORA_ESP32 fabricação própria
-#define PKLORA_NODEMCU // #define PKLORA_NODEMCU
+//#define PKLORA_ESP32 // #define PKLORA_ESP32
+#define AFLORA_ESP32 // #define AFLORA_ESP32 fabricação própria
+//#define PKLORA_NODEMCU // #define PKLORA_NODEMCU
 
 //=======================================================================
 // 2 - Biblioteca - chama o arquivo Biblioteca.h
@@ -37,14 +37,14 @@ const int   MQTT_PORT     = 1883;
 //const char* TOPIC_DL      = "mot_lora_mqtt_FEE23/gateway/downlink";
 //const char* TOPIC_UL      = "mot_lora_mqtt_FEE23/gateway/uplink";
 
-const char* TOPIC_DL      = "mot_lora_mqtt_IE350/gateway/downlink";  // Python → ESP32
-const char* TOPIC_UL      = "mot_lora_mqtt_IE350/gateway/uplink";    // ESP32  → Python
+const char* TOPIC_DL      = "mot_lora_194104/gateway/downlink";  // Python → ESP32
+const char* TOPIC_UL      = "mot_lora_194104/gateway/uplink";    // ESP32  → Python
 String CLIENT_ID ;         // ID único no broker
 
 // QoS usado nos dois sentidos (DL e UL). QoS1 = "at least once"
 // MQTT confirma o recebimento (PUBACK) e a biblioteca retransmite se necessário.
 
-#if defined(PKLORA_ESP32)
+#if defined(PKLORA_ESP32) || defined(AFLORA_ESP32)
 
   const int MQTT_QOS = 1;
 
@@ -166,7 +166,7 @@ void setup() {
   mqttClient.onMessageAdvanced(mqtt_callback);
   conectar_mqtt();
 
-  #if defined(PKLORA_ESP32)
+  #if defined(PKLORA_ESP32) || defined(AFLORA_ESP32)
     // --- Inicialização da Comunicação SPI entre o ESP32 e o Módulo LoRa RFM95 ---
     SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, NSS_PIN);
     delay(20);

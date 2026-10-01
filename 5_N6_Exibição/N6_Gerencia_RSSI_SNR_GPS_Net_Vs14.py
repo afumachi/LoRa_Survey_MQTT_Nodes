@@ -814,11 +814,101 @@ Button(frame_controles_ed, text="💾 Salvar Alterações no Arquivo", font=("Ar
 
 Label(frame_controles_ed, text="----------------------------------------", bg="#F0F0F0", fg="gray").pack(pady=5)
 
+Label(frame_controles_ed, text="Modificar os Parâmetros de Rádio LoRa", bg="#F0F0F0", fg="black", font=(None, 11, "bold")).pack(pady=5)
+
+
+# 4. Campos de Entrada adicionais para Modificação do Rádio
+entry_ed_sf  = criar_campo("Spreading Factor [7 a 12] (SF):")
+entry_ed_sf.insert(0, "12")
+
+entry_ed_bw  = criar_campo("Bandwidth [125 | 250 | 500 KHz] (BW):")
+entry_ed_bw.insert(0, "125")
+
+entry_ed_cr  = criar_campo("Coding Rate [5 a 8] (CR):")
+entry_ed_cr.insert(0, "8")
+
+entry_ed_ptx = criar_campo("Potência TX [2 a 20 dBm]:")
+entry_ed_ptx.insert(0, "14")
+
+
+# 5. Função e Botão Modificar Rádio LoRa com Validação de Entrada
+def modificar_radio_lora():
+    selecionados = tabela_ed.selection()
+    if not selecionados:
+        messagebox.showwarning("Aviso", "Selecione um End Device na tabela para reconfigurar.")
+        return
+
+    # Captura os valores digitados
+    sf_str = entry_ed_sf.get().strip()
+    bw_str = entry_ed_bw.get().strip()
+    cr_str = entry_ed_cr.get().strip()
+    ptx_str = entry_ed_ptx.get().strip()
+
+    # 1. Validação de Campos Vazios
+    if not (sf_str and bw_str and cr_str and ptx_str):
+        messagebox.showwarning("Aviso", "Preencha todos os campos de parâmetro de Rádio (SF, BW, CR, PTX).")
+        return
+
+    # 2. Validação de Tipos Numéricos e Limites de Rádio
+    try:
+        sf_val = int(sf_str)
+        bw_val = int(bw_str)
+        cr_val = int(cr_str)
+        ptx_val = int(ptx_str)
+
+        # Validação do Spreading Factor (SF: 7 a 12)
+        if not (7 <= sf_val <= 12):
+            messagebox.showerror("Valor Invalido", "O Spreading Factor (SF) deve estar entre 7 e 12.")
+            return
+
+        # Validação do Bandwidth (BW: apenas 125, 250 ou 500 KHz)
+        if bw_val not in (125, 250, 500):
+            messagebox.showerror("Valor Invalido", "O Bandwidth (BW) deve ser exatamente 125, 250 ou 500 KHz.")
+            return
+
+        # Validação do Coding Rate Denominator (CR: 5 a 8)
+        if not (5 <= cr_val <= 8):
+            messagebox.showerror("Valor Invalido", "O Coding Rate (CR) deve ser um número entre 5 e 8 (representando 4/5 a 4/8).")
+            return
+
+        # Validação da Potência de Transmissão (PTX: 2 a 20 dBm)
+        if not (2 <= ptx_val <= 20):
+            messagebox.showerror("Valor Invalido", "A Potência TX deve estar entre 2 e 20 dBm.")
+            return
+
+    except ValueError:
+        messagebox.showerror("Erro de Formato", "Todos os campos de rádio devem conter valores numéricos inteiros válidos.")
+        return
+
+    # 3. Se passou em todas as validações, atualiza os itens na Treeview
+    for item in selecionados:
+        vals = list(tabela_ed.item(item, 'values'))
+        
+        vals[5] = str(sf_val)
+        vals[6] = str(bw_val)
+        vals[7] = str(cr_val)
+        vals[8] = str(ptx_val)
+        vals[9] = 1  # comando_radio = 1
+        
+        tabela_ed.item(item, values=tuple(vals))
+
+    # 4. Restaura os campos para o valor padrão de Long Range
+    valores_padrao = [("12", entry_ed_sf), ("125", entry_ed_bw), ("8", entry_ed_cr), ("14", entry_ed_ptx)]
+    for val, entry in valores_padrao:
+        entry.delete(0, END)
+        entry.insert(0, val)
+
+    # 5. Grava as alterações no arquivo CSV
+    salvar_ed(silencioso=False)
+
+
+'''
 # 4. Campos de Entrada adicionais para Modificação do Rádio
 entry_ed_sf  = criar_campo("Spreading Factor [7 a 12] (SF):")
 entry_ed_bw  = criar_campo("Bandwidth [125 | 250 | 500 KHz] (BW):")
 entry_ed_cr  = criar_campo("Coding Rate [5 a 8] (CR):")
 entry_ed_ptx = criar_campo("Potência TX [2 a 20 dBm]:")
+
 
 # 5. Função e Botão Modificar Rádio LoRa
 def modificar_radio_lora():
@@ -852,8 +942,15 @@ def modificar_radio_lora():
     for entry in (entry_ed_sf, entry_ed_bw, entry_ed_cr, entry_ed_ptx):
         entry.delete(0, END)
 
+    # Restaura os valores padrão nos campos após aplicar a modificação
+    valores_padrao = [("12", entry_ed_sf), ("125", entry_ed_bw), ("8", entry_ed_cr), ("14", entry_ed_ptx)]
+    for val, entry in valores_padrao:
+        entry.delete(0, END)
+        entry.insert(0, val)
+
     # Grava as alterações no arquivo CSV e atualiza a interface
     salvar_ed(silencioso=False)
+'''
 
 btn_modificar_radio = Button(frame_controles_ed, text="📡 Modificar Rádio LoRa", font=("Arial", 11, "bold"), bg="#2196F3", fg="white", state="disabled", command=modificar_radio_lora)
 btn_modificar_radio.pack(fill=X, pady=8)

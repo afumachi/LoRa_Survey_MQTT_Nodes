@@ -71,7 +71,7 @@ byte PacoteUL[TAMANHO_PACOTE];
 
 // ============= CAMADA DE REDE
 // Identificação do sensor e tamanho de pacote
-int ID_sensor = 1; // Variável de iIdentificação do sensor que está no pacote de DL byte 8
+int ID_sensor = 2; // Variável de iIdentificação do sensor que está no pacote de DL byte 8
 int ID_gateway = 0;    // Variável com o ID_gateway que estará no pacote de DL byte 10
 
 // ============== CAMADA DE TRANSPORTE
