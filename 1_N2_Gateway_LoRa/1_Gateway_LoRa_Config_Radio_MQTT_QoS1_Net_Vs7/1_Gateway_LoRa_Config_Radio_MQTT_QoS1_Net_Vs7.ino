@@ -222,7 +222,7 @@ void loop() {
   }
 
   // Liga um LED a cada 500 [ms]
-  unsigned long tempo_led_ms = 500UL;
+  unsigned long tempo_led_ms = 1000UL;
   
 
   if (millis() - millis_mqtt_controle >= tempo_led_ms) {        
@@ -241,15 +241,16 @@ void loop() {
     conectar_mqtt();
   }
   else{
-    if (    st_led_vermelho == 1){
-      digitalWrite(LED_VERMELHO_PIN, HIGH);
-      digitalWrite(LED_VERDE_PIN, HIGH);
-    }
-    else{
+    if (st_led_vermelho == 1){
       digitalWrite(LED_VERMELHO_PIN, LOW);
       digitalWrite(LED_VERDE_PIN, LOW);
     }
+    else{
+      digitalWrite(LED_VERMELHO_PIN, HIGH);
+      digitalWrite(LED_VERDE_PIN, HIGH);
+    }
   }
+
   mqttClient.loop();   // processa envio/recebimento e handshakes de QoS1/2
 
   // Verifica se chegou pacote DL via MQTT e o envia pelo rádio LoRa
@@ -270,7 +271,7 @@ void loop() {
 
 
   // Imprime Radio Config a cada 10 [s]
-  unsigned long tempo_loop_ms = 10000UL;  
+  unsigned long tempo_loop_ms = 20000UL;  
 
   if (millis() - millis_radio_control >= tempo_loop_ms) {        
 
