@@ -11,8 +11,8 @@
 // Remova o comentário da linha referente ao módulo que você está utilizando e comente a outro
 
 //#define PKLORA_ESP32 // #define PKLORA_ESP32
-#define AFLORA_ESP32 // #define AFLORA_ESP32 fabricação própria
-//#define PKLORA_NODEMCU // #define PKLORA_NODEMCU
+//#define AFLORA_ESP32 // #define AFLORA_ESP32 fabricação própria
+#define PKLORA_NODEMCU // #define PKLORA_NODEMCU
 
 //=======================================================================
 // 2 - Biblioteca - chama o arquivo Biblioteca.h
@@ -27,7 +27,7 @@
 // const char* MQTT_BROKER = "test.mosquitto.org";
 
 // Configurações do Broker HiveMQ (Usando o broker público oficial)
-// const char* MQTT_BROKER   = "broker.hivemq.com";
+//const char* MQTT_BROKER   = "broker.hivemq.com";
 
 // Configurações do Broker Smart TpM (Usando o broker público Smart TpM)
 const char* MQTT_BROKER   = "www.tpm.dev.br";
@@ -83,9 +83,11 @@ MQTTClient mqttClient(256);   // buffer de 256 bytes (read/write)
 void conectar_wifi_multi() {
 
   // Cadastre quantas redes você quiser (SSID, Senha)
+	wifiMulti.addAP("2.4G COLETTI", "1145384609");
+
   wifiMulti.addAP("MJCA_FUNDOS", "21092429MJC@");
 
-	wifiMulti.addAP("2.4G COLETTI", "1145384609");
+
 	wifiMulti.addAP("COLETTI_ext", "1145384609");
   wifiMulti.addAP("COLETTI_ADV_CRIS", "45384609");
 

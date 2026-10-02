@@ -1019,7 +1019,7 @@ try:
 
                     downlink()
                                           
-                    time.sleep(toa_entre_medidas/10)
+                    time.sleep(toa_entre_medidas/2)
 
                     uplink()
 
