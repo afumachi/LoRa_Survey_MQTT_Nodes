@@ -116,7 +116,7 @@ valor_novo_codingrate      = pgm_read_byte(&(RADIO_CONFIG_LUT[radio_config_index
     valor_novo_codingrate = PacoteDL[2];         // Byte DL[2] valor de rádio LoRa de CodingRate
 */
 
-    valor_novo_potencia_radio = 20;//PacoteDL[3];     // Byte DL[3] valor de rádio LoRa de Potência de Rádio LoRa
+    valor_novo_potencia_radio = 2;//PacoteDL[3];     // Byte DL[3] valor de rádio LoRa de Potência de Rádio LoRa
     tempo_radio = PacoteDL[6];                   // Byte DL[6] Recebe tempo de radio tx rx
     recebe_comando_nova_radio = PacoteDL[7];     // Byte DL[7] Recebe comando de reconfiguração de Rádio LoRa
 

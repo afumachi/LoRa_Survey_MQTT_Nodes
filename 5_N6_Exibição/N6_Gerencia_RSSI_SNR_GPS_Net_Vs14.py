@@ -206,8 +206,8 @@ def atualizar_grafico(ax1, ax2, ax3, ax4, canvas1, canvas2, canvas3, canvas4, ra
     # Gráficos
     ax1.clear(); ax2.clear(); ax3.clear(); ax4.clear()
     
-    if rssi_down: ax1.plot(rssi_down, label="RSSI Downlink (dBm)", linewidth=1.5, marker='o', markersize=2, color=cor_rssi_down)
-    if rssi_up: ax1.plot(rssi_up, label="RSSI Uplink (dBm)", linewidth=1.5, marker='s', markersize=2, color=cor_rssi_up)
+    if rssi_down: ax1.plot(rssi_down, label="RSSI Downlink (dBm)", linewidth=1.5, marker='o', markersize=1, color=cor_rssi_down)
+    if rssi_up: ax1.plot(rssi_up, label="RSSI Uplink (dBm)", linewidth=1.5, marker='s', markersize=1, color=cor_rssi_up)
     if rssi_down or rssi_up:
         ax1.legend(loc='upper right', fontsize=8)
         val_min, val_max = min(rssi_down + rssi_up), max(rssi_down + rssi_up)
@@ -215,8 +215,8 @@ def atualizar_grafico(ax1, ax2, ax3, ax4, canvas1, canvas2, canvas3, canvas4, ra
         ax1.set_ylim(val_min - margem, val_max + margem)
     ax1.set_title("RSSI LoRa (Downlink / Uplink)", fontsize=9); ax1.set_ylabel("RSSI (dBm)", fontsize=9); ax1.tick_params(axis='both', labelsize=7)    
 
-    if snr_down: ax2.plot(snr_down, label="SNR Downlink (dB)", linewidth=1.5, marker='o', markersize=2, color=cor_snr_down)
-    if snr_up: ax2.plot(snr_up, label="SNR Uplink (dB)", linewidth=1.5, marker='s', markersize=2, color=cor_snr_up)
+    if snr_down: ax2.plot(snr_down, label="SNR Downlink (dB)", linewidth=1.5, marker='o', markersize=1, color=cor_snr_down)
+    if snr_up: ax2.plot(snr_up, label="SNR Uplink (dB)", linewidth=1.5, marker='s', markersize=1, color=cor_snr_up)
     if snr_down or snr_up:
         ax2.legend(loc='upper right', fontsize=8)
         val_snr_min, val_snr_max = min(snr_down + snr_up), max(snr_down + snr_up)
@@ -225,15 +225,15 @@ def atualizar_grafico(ax1, ax2, ax3, ax4, canvas1, canvas2, canvas3, canvas4, ra
     ax2.set_title("SNR LoRa (Downlink / Uplink)", fontsize=9); ax2.set_ylabel("SNR (dB)", fontsize=9); ax2.tick_params(axis='both', labelsize=7)    
 
     if psr:
-        ax3.plot(psr, label="PSR (%)", linewidth=1.5, marker='o', markersize=2, color=cor_psr)
+        ax3.plot(psr, label="PSR (%)", linewidth=1.5, marker='o', markersize=1, color=cor_psr)
         ax3.legend(loc='upper right', fontsize=8)
         val_min, val_max = min(psr), max(psr)
         margem = (val_max - val_min) * 0.10 or 5
         ax3.set_ylim(max(0, val_min - margem), min(105, val_max + margem))
     ax3.set_title("Packet Success Rate - PSR", fontsize=9); ax3.set_ylabel("PSR (%)", fontsize=9); ax3.tick_params(axis='both', labelsize=7)   
 
-    if taxa_teorica: ax4.plot(taxa_teorica, label="Taxa Teórica (bps)", linewidth=1.5, marker='o', markersize=2, color=cor_taxa_teorica)
-    if taxa_calculada: ax4.plot(taxa_calculada, label="Taxa Real (bps)", linewidth=1.5, marker='s', markersize=2, color=cor_taxa_calculada)
+    if taxa_teorica: ax4.plot(taxa_teorica, label="Taxa Teórica (bps)", linewidth=1.5, marker='o', markersize=1, color=cor_taxa_teorica)
+    if taxa_calculada: ax4.plot(taxa_calculada, label="Taxa Real (bps)", linewidth=1.5, marker='s', markersize=1, color=cor_taxa_calculada)
     if taxa_teorica or taxa_calculada:
         ax4.legend(loc='upper right', fontsize=8)
         val_min, val_max = min(taxa_teorica + taxa_calculada), max(taxa_teorica + taxa_calculada)
@@ -902,56 +902,6 @@ def modificar_radio_lora():
     salvar_ed(silencioso=False)
 
 
-'''
-# 4. Campos de Entrada adicionais para Modificação do Rádio
-entry_ed_sf  = criar_campo("Spreading Factor [7 a 12] (SF):")
-entry_ed_bw  = criar_campo("Bandwidth [125 | 250 | 500 KHz] (BW):")
-entry_ed_cr  = criar_campo("Coding Rate [5 a 8] (CR):")
-entry_ed_ptx = criar_campo("Potência TX [2 a 20 dBm]:")
-
-
-# 5. Função e Botão Modificar Rádio LoRa
-def modificar_radio_lora():
-    selecionados = tabela_ed.selection()
-    if not selecionados:
-        messagebox.showwarning("Aviso", "Selecione um End Device na tabela para reconfigurar.")
-        return
-
-    sf_new = entry_ed_sf.get().strip()
-    bw_new = entry_ed_bw.get().strip()
-    cr_new = entry_ed_cr.get().strip()
-    ptx_new = entry_ed_ptx.get().strip()
-
-    if not (sf_new and bw_new and cr_new and ptx_new):
-        messagebox.showwarning("Aviso", "Preencha todos os campos de parâmetro de Rádio (SF, BW, CR, PTX).")
-        return
-
-    for item in selecionados:
-        vals = list(tabela_ed.item(item, 'values'))
-        
-        # Atualiza os parâmetros novos e o comando de rádio
-        vals[5] = sf_new
-        vals[6] = bw_new
-        vals[7] = cr_new
-        vals[8] = ptx_new
-        vals[9] = 1  # cmd_lora = 1
-        
-        tabela_ed.item(item, values=tuple(vals))
-
-    # Limpa os campos após modificar
-    for entry in (entry_ed_sf, entry_ed_bw, entry_ed_cr, entry_ed_ptx):
-        entry.delete(0, END)
-
-    # Restaura os valores padrão nos campos após aplicar a modificação
-    valores_padrao = [("12", entry_ed_sf), ("125", entry_ed_bw), ("8", entry_ed_cr), ("14", entry_ed_ptx)]
-    for val, entry in valores_padrao:
-        entry.delete(0, END)
-        entry.insert(0, val)
-
-    # Grava as alterações no arquivo CSV e atualiza a interface
-    salvar_ed(silencioso=False)
-'''
-
 btn_modificar_radio = Button(frame_controles_ed, text="📡 Modificar Rádio LoRa", font=("Arial", 11, "bold"), bg="#2196F3", fg="white", state="disabled", command=modificar_radio_lora)
 btn_modificar_radio.pack(fill=X, pady=8)
 
@@ -966,24 +916,6 @@ def ao_selecionar_tabela(event):
 
 tabela_ed.bind("<<TreeviewSelect>>", ao_selecionar_tabela)
 
-'''
-# Habilita / Desabilita o botão conforme seleção na Treeview e carrega os campos nos entries
-def ao_selecionar_tabela(event):
-    selecionados = tabela_ed.selection()
-    if selecionados:
-        btn_modificar_radio.config(state="normal")
-        vals = tabela_ed.item(selecionados[0], 'values')
-        
-        entry_ed_sf.delete(0, END); entry_ed_sf.insert(0, str(vals[5]))
-        entry_ed_bw.delete(0, END); entry_ed_bw.insert(0, str(vals[6]))
-        entry_ed_cr.delete(0, END); entry_ed_cr.insert(0, str(vals[7]))
-        entry_ed_ptx.delete(0, END); entry_ed_ptx.insert(0, str(vals[8]))
-    else:
-        btn_modificar_radio.config(state="disabled")
-
-tabela_ed.bind("<<TreeviewSelect>>", ao_selecionar_tabela)
-
-'''
 
 def carregar_tabela_ed():
     global ultima_modificacao_csv
@@ -1047,229 +979,7 @@ def monitorar_atualizacao_csv():
 carregar_tabela_ed()
 monitorar_atualizacao_csv()
 
-'''
-# =============================================================================
-# ABA 5: CADASTRO DE END DEVICES
-# =============================================================================
-aba_end_devices = Frame(notebook, bg="#F0F0F0")
-notebook.add(aba_end_devices, text="  💻 Nó Sensores (End Devices)  ")
 
-# FRAME ESQUERDO: Tabela (Lista de Dispositivos)
-frame_tabela_ed = Frame(aba_end_devices, bg="#F0F0F0")
-frame_tabela_ed.pack(side=LEFT, fill=BOTH, expand=True, padx=20, pady=20)
-
-Label(frame_tabela_ed, text="End Devices Cadastrados no CSV", font=("Arial", 14, "bold"), bg="#F0F0F0").pack(pady=(0, 10))
-
-colunas_ed = ("endereco_rede", "spreading_factor", "bandwidth", "coding_rate", "potencia_tx", "spreading_factor_new", "bandwidth_new", "coding_rate_new", "potencia_tx_new", "comando_radio", "comando_radio_st")
-tabela_ed = ttk.Treeview(frame_tabela_ed, columns=colunas_ed, show="headings", height=20)
-
-tabela_ed.heading("endereco_rede", text="ID da Rede")
-tabela_ed.heading("spreading_factor", text="Spreading Factor")
-tabela_ed.heading("bandwidth", text="Bandwidth KHz")
-tabela_ed.heading("coding_rate", text="Coding Rate")
-tabela_ed.heading("potencia_tx", text="Potência Tx")
-tabela_ed.heading("spreading_factor_new", text="Config SF")
-tabela_ed.heading("bandwidth_new", text="Config BW KHz")
-tabela_ed.heading("coding_rate_new", text="Config CR")
-tabela_ed.heading("potencia_tx_new", text="Config P TX")
-tabela_ed.heading("comando_radio", text="Cmd LoRa")
-tabela_ed.heading("comando_radio_st", text="St Cmd LoRa")
-
-for col in colunas_ed:
-    tabela_ed.column(col, anchor="center", width=60)
-
-tabela_ed.pack(side=LEFT, fill=BOTH, expand=True)
-
-scroll_ed = ttk.Scrollbar(frame_tabela_ed, orient="vertical", command=tabela_ed.yview)
-tabela_ed.configure(yscrollcommand=scroll_ed.set)
-scroll_ed.pack(side=RIGHT, fill=Y)
-
-# FRAME DIREITO: Controles
-frame_controles_ed = Frame(aba_end_devices, bg="#F0F0F0", width=350)
-frame_controles_ed.pack(side=RIGHT, fill=Y, padx=20, pady=20)
-
-Label(frame_controles_ed, text="Gerenciar End Devices", font=("Arial", 14, "bold"), bg="#F0F0F0").pack(pady=(0, 10))
-
-def criar_campo(texto):
-    Label(frame_controles_ed, text=texto, bg="#F0F0F0", font=("Arial", 10, "bold")).pack(anchor="w", pady=(3, 0))
-    entry = Entry(frame_controles_ed, font=("Arial", 11))
-    entry.pack(fill=X, pady=(0, 3))
-    return entry
-
-# 1. Campo ID do Nó Sensor
-entry_ed_id = criar_campo("Endereço de Rede (ID Nó Sensor): *")
-
-# 2. Funções básicas de gerenciamento de lista
-def adicionar_ed():
-    novo_id = entry_ed_id.get().strip()
-    
-    # Parâmetros padrão para Long Range
-    sf = 12
-    bw = 125
-    cr = 8
-    ptx = 20
-    
-    sf_new = 12
-    bw_new = 125
-    cr_new = 8
-    ptx_new = 20
-    cmd_lora = 4
-    st_cmd_lora = 4
-
-    if novo_id:
-        tabela_ed.insert("", "end", values=(novo_id, sf, bw, cr, ptx, sf_new, bw_new, cr_new, ptx_new, cmd_lora, st_cmd_lora))
-        entry_ed_id.delete(0, END)
-        salvar_ed(silencioso=True)
-    else:
-        messagebox.showwarning("Aviso", "O Endereço de Rede (ID) é obrigatório.")
-
-def excluir_ed():
-    selecionados = tabela_ed.selection()
-    if not selecionados:
-        messagebox.showwarning("Aviso", "Selecione um End Device na tabela para excluir.")
-        return
-    for item in selecionados:
-        tabela_ed.delete(item)
-    salvar_ed(silencioso=True)
-
-def salvar_ed(silencioso=False):
-    dados_para_salvar = []
-    
-    for item in tabela_ed.get_children():
-        valores = tabela_ed.item(item, 'values')
-        dados_para_salvar.append({
-            "endereco_rede": valores[0],
-            "spreading_factor": valores[1],
-            "bandwidth": valores[2],
-            "coding_rate": valores[3],
-            "potencia_tx": valores[4],
-            "spreading_factor_new": valores[5],
-            "bandwidth_new": valores[6],
-            "coding_rate_new": valores[7],
-            "potencia_tx_new": valores[8],
-            "comando_radio": valores[9],
-            "comando_radio_st": valores[10]
-        })
-    
-    df_salvar = pd.DataFrame(dados_para_salvar, columns=colunas_ed)
-    
-    try:
-        df_salvar.to_csv(arquivo_csv_end_devices, index=False)
-        if not silencioso:
-            messagebox.showinfo("Sucesso", f"End Devices salvos com sucesso em:\n{arquivo_csv_end_devices}")
-        
-        lista_atualizada = [str(dev) for dev in ler_end_devices()]
-        combo_devices['values'] = lista_atualizada
-        if lista_atualizada and end_device_selecionado.get() not in lista_atualizada:
-            combo_devices.current(0)
-            
-    except Exception as e:
-        if not silencioso:
-            messagebox.showerror("Erro", f"Erro ao salvar arquivo CSV: {e}")
-
-# 3. Botões positioned logo abaixo do campo de ID
-Button(frame_controles_ed, text="➕ Adicionar à Lista", font=("Arial", 11), command=adicionar_ed).pack(fill=X, pady=3)
-Button(frame_controles_ed, text="❌ Excluir Selecionado", font=("Arial", 11), command=excluir_ed).pack(fill=X, pady=3)
-
-Label(frame_controles_ed, text="----------------------------------------", bg="#F0F0F0", fg="gray").pack(pady=5)
-
-Button(frame_controles_ed, text="💾 Salvar Alterações no Arquivo", font=("Arial", 11, "bold"), bg="#4CAF50", fg="white", command=lambda: salvar_ed(silencioso=False)).pack(fill=X, pady=5)
-
-Label(frame_controles_ed, text="----------------------------------------", bg="#F0F0F0", fg="gray").pack(pady=5)
-
-# 4. Campos de Entrada adicionais para Modificação do Rádio
-entry_ed_sf  = criar_campo("Spreading Factor [7 a 12] (SF):")
-entry_ed_bw  = criar_campo("Bandwidth [125 | 250 | 500 KHz] (BW):")
-entry_ed_cr  = criar_campo("Coding Rate [5 a 8] (CR):")
-entry_ed_ptx = criar_campo("Potência TX [2 a 20 dBm]:")
-
-# 5. Função e Botão Modificar Rádio LoRa
-def modificar_radio_lora():
-    selecionados = tabela_ed.selection()
-    if not selecionados:
-        messagebox.showwarning("Aviso", "Selecione um End Device na tabela para reconfigurar.")
-        return
-
-    sf_new = entry_ed_sf.get().strip()
-    bw_new = entry_ed_bw.get().strip()
-    cr_new = entry_ed_cr.get().strip()
-    ptx_new = entry_ed_ptx.get().strip()
-
-    if not (sf_new and bw_new and cr_new and ptx_new):
-        messagebox.showwarning("Aviso", "Preencha todos os campos de parâmetro de Rádio (SF, BW, CR, PTX).")
-        return
-
-    for item in selecionados:
-        vals = list(tabela_ed.item(item, 'values'))
-        
-        # Atualiza os parâmetros novos e o comando de rádio
-        vals[5] = sf_new
-        vals[6] = bw_new
-        vals[7] = cr_new
-        vals[8] = ptx_new
-        vals[9] = 1  # cmd_lora = 1
-        
-        tabela_ed.item(item, values=tuple(vals))
-
-    # Limpa os campos após modificar
-    for entry in (entry_ed_sf, entry_ed_bw, entry_ed_cr, entry_ed_ptx):
-        entry.delete(0, END)
-
-    # Grava as alterações no arquivo CSV e atualiza a interface
-    salvar_ed(silencioso=False)
-
-btn_modificar_radio = Button(frame_controles_ed, text="📡 Modificar Rádio LoRa", font=("Arial", 11, "bold"), bg="#2196F3", fg="white", state="disabled", command=modificar_radio_lora)
-btn_modificar_radio.pack(fill=X, pady=8)
-
-# Habilita / Desabilita o botão conforme seleção na Treeview e carrega os campos nos entries
-def ao_selecionar_tabela(event):
-    selecionados = tabela_ed.selection()
-    if selecionados:
-        btn_modificar_radio.config(state="normal")
-        # Preenche os campos com a nova configuração atual
-        vals = tabela_ed.item(selecionados[0], 'values')
-        
-        entry_ed_sf.delete(0, END); entry_ed_sf.insert(0, str(vals[5]))
-        entry_ed_bw.delete(0, END); entry_ed_bw.insert(0, str(vals[6]))
-        entry_ed_cr.delete(0, END); entry_ed_cr.insert(0, str(vals[7]))
-        entry_ed_ptx.delete(0, END); entry_ed_ptx.insert(0, str(vals[8]))
-    else:
-        btn_modificar_radio.config(state="disabled")
-
-tabela_ed.bind("<<TreeviewSelect>>", ao_selecionar_tabela)
-
-def carregar_tabela_ed():
-    for item in tabela_ed.get_children():
-        tabela_ed.delete(item)
-        
-    if os.path.exists(arquivo_csv_end_devices):
-        try:
-            df_devices = pd.read_csv(arquivo_csv_end_devices)
-            
-            for col in colunas_ed:
-                if col not in df_devices.columns:
-                    df_devices[col] = ""
-
-            for _, row in df_devices.iterrows():
-                tabela_ed.insert("", "end", values=(
-                    row["endereco_rede"],
-                    row["spreading_factor"],
-                    row["bandwidth"],
-                    row["coding_rate"],
-                    row["potencia_tx"],
-                    row["spreading_factor_new"],
-                    row["bandwidth_new"],
-                    row["coding_rate_new"],
-                    row["potencia_tx_new"],
-                    row["comando_radio"],
-                    row["comando_radio_st"]
-                ))
-        except Exception as e:
-            print(f"Erro ao carregar CSV na tabela: {e}")
-
-carregar_tabela_ed()
-
-'''
 
 # =============================================================================
 # CALLBACK DE FECHAR JANELA
