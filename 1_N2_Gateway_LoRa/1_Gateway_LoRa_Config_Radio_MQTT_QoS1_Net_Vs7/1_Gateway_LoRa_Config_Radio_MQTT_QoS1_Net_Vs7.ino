@@ -1,3 +1,5 @@
+// PWA Aplicativo de acesso
+
 /*
   MoT LoRa Site Survey Versão Zero | WissTek IoT
   Última versão: Branquinho / Felipe / Anderson
@@ -37,8 +39,8 @@ const int   MQTT_PORT     = 1883;
 //const char* TOPIC_DL      = "mot_lora_mqtt_FEE23/gateway/downlink";
 //const char* TOPIC_UL      = "mot_lora_mqtt_FEE23/gateway/uplink";
 
-const char* TOPIC_DL      = "mot_lora_194104/gateway/downlink";  // Python → ESP32
-const char* TOPIC_UL      = "mot_lora_194104/gateway/uplink";    // ESP32  → Python
+const char* TOPIC_DL      = "mot_mqtt_194104/gateway/downlink";  // Python → ESP32
+const char* TOPIC_UL      = "mot_mqtt_194104/gateway/uplink";    // ESP32  → Python
 String CLIENT_ID ;         // ID único no broker
 
 // QoS usado nos dois sentidos (DL e UL). QoS1 = "at least once"
@@ -69,8 +71,6 @@ MQTTClient mqttClient(256);   // buffer de 256 bytes (read/write)
 #define spreadingFactor       7       // ranges from 6-12,default 7
 #define signalBandwidth       500E3    // signal bandwidth in Hz
 #define codingRateDenominator 5        // denominator of the coding rate
-
-#define TAMANHO_PACOTE 20
 
 // Habilita ou disabilita o uso CRC, por padrão o CRC não é usado.
 //#define loraCRC

@@ -39,7 +39,7 @@ void Transp_radio_send_UL() {
   PacoteUL[15] = contadorUL%256; // = contadorUL & 0xFF;
   // neste ponto pode ser implementado um controle relacionado ao recebimento não sequencial de pacotes de DL
   
-  #if defined(GPS_INTEGRADO)
+  #if defined(OLED_INTEGRADO)
 
     display.setTextSize(1);
     //display.setCursor(0, 35);

@@ -62,6 +62,9 @@ void App_radio_send_UL() {
       PacoteUL[28] = (alt >> 8) & 0xFF; // Byte mais significativo (MSB)
       PacoteUL[29] = alt        & 0xFF; // Byte menos significativo (LSB)
     }
+  #endif
+  
+  #if defined(OLED_INTEGRADO)
 
     // Limapa os dados do Display
     display.clearDisplay();

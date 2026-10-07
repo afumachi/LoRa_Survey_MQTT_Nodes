@@ -11,12 +11,12 @@
 
 // Remova o comentário da linha referente ao módulo que você está utilizando e comente a outro
 
-//#define PKLORA_ESP32 // HARDWARE COM ESP32
-#define PKLORA_NODEMCU // HARDWARE COM ESP12E - NODEMCU
+#define PKLORA_ESP32 // HARDWARE COM ESP32
+//#define PKLORA_NODEMCU // HARDWARE COM ESP12E - NODEMCU
 
 // Caso tenha sensor GPS integrado ao Módulo
-#define SEM_GPS // MoT 20 Bytes
-//#define GPS_INTEGRADO // MoT 30 Bytes
+//#define SEM_GPS // MoT 20 Bytes
+#define GPS_INTEGRADO // MoT 30 Bytes
 
 //=======================================================================
 // 2 - Biblioteca - chama o arquivo Biblioteca.h
@@ -48,9 +48,9 @@
 // Parâmetros do LoRa
 #define FREQUENCY_IN_HZ       903E6    // LoRa Frequency
 #define txPower               14       // TX power in dBm, defaults to 17
-#define spreadingFactor       7       // ranges from 6-12,default 7
-#define signalBandwidth       500E3    // signal bandwidth in Hz
-#define codingRateDenominator 5        // denominator of the coding rate
+#define spreadingFactor       12       // ranges from 6-12,default 7
+#define signalBandwidth       125E3    // signal bandwidth in Hz
+#define codingRateDenominator 8        // denominator of the coding rate
 
 #define TAMANHO_PACOTE 20
 
@@ -187,9 +187,12 @@ void setup() {
   #endif
 
   // Pisca o LED Verde para indicar inicialização bem-sucedida
-  //digitalWrite(LED_VERDE_PIN, HIGH);
+  digitalWrite(LED_VERDE_PIN, HIGH);
   delay(1000);
-  //digitalWrite(LED_VERDE_PIN, LOW);
+
+  digitalWrite(LED_VERMELHO_PIN, LOW);
+  digitalWrite(LED_VERDE_PIN, LOW);
+
 
 } // FIM DO SETUP
 
@@ -202,7 +205,7 @@ void loop() {
   // --- Controle de timeout do Comando 4 ---
   // Executado a cada iteração do loop, independente de novo pacote chegar
   if (controle_ativo) {
-    unsigned long tempo_limite_ms = (unsigned long)tempo_radio * 100UL * 1000UL; // 10x o valor recebido em MAC3_TEMPO
+    unsigned long tempo_limite_ms = (unsigned long)tempo_radio * 2UL * 1000UL; // 10x o valor recebido em MAC3_TEMPO
 
     if (millis() - millis_inicio_controle >= tempo_limite_ms) {
       //reset_para_setup_inicial(); // Timeout atingido → volta ao SETUP

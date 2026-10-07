@@ -156,7 +156,7 @@ void Phy_radio_send_UL() {
     RSSI_dBm_DL = ((Rssi_DL_bruto - offset) + (SNR_DL_bruto));
   }  
   
-  #if defined(GPS_INTEGRADO)
+  #if defined(OLED_INTEGRADO)
 
     display.setTextSize(1);
     //  display.setCursor(0, 55);

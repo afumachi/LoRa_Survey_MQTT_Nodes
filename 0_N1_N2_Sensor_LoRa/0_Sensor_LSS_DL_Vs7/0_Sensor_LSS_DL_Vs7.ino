@@ -15,8 +15,8 @@
 //#define PKLORA_NODEMCU // HARDWARE COM ESP12E - NODEMCU
 
 // Caso tenha sensor GPS integrado ao Módulo
-#define SEM_GPS // MoT 20 Bytes
-//#define GPS_INTEGRADO // MoT 30 Bytes
+//#define SEM_GPS // MoT 20 Bytes
+#define GPS_INTEGRADO // MoT 30 Bytes
 
 //=======================================================================
 // 2 - Biblioteca - chama o arquivo Biblioteca.h
@@ -52,7 +52,7 @@
 #define signalBandwidthSetup       125E3    // signal bandwidth in Hz
 #define codingRateDenominatorSetup 8        // denominator of the coding rate
 
-#define TAMANHO_PACOTE 20
+#define TAMANHO_PACOTE 30
 
 // Habilita ou disabilita o uso CRC, por padrão o CRC não é usado.
 //#define loraCRC
@@ -142,6 +142,9 @@ void setup() {
   #if defined(GPS_INTEGRADO)
     // GPS Serial: Baud 9600, Pins: RX=16, TX=17
     SerialGPS.begin(9600, SERIAL_8N1, 16, 17);
+  #endif
+
+  #if defined(OLED_INTEGRADO)
 
     // Initialize I2C with your specific pins (SDA = 21, SCL = 22)
     Wire.begin(21, 22);
@@ -184,7 +187,8 @@ void setup() {
  
   Serial.println("LoRa Inicializado com Sucesso!");
 
-  #if defined(GPS_INTEGRADO)
+  #if defined(OLED_INTEGRADO)
+
     // Limpa o Display
     display.clearDisplay();
       

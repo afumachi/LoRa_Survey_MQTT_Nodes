@@ -64,7 +64,7 @@ RADIO_CONFIG_LUT = [
     (12, 500000, 5), (12, 500000, 6), (12, 500000, 7), (12, 500000, 8),
 ]
 
-TAMANHO_PACOTE = 20
+TAMANHO_PACOTE = 30
 
 
 def ler_end_devices():
@@ -208,6 +208,8 @@ pasta_dados_brutos = os.path.join(PASTA_ARMAZENAMENTO, "Dados_Brutos")
 
 while True:
     try:
+        # Lê dinamicamente os parâmetros do Gateway e End Devices cadastrados
+        GW_LAT, GW_LON, GW_ALT = ler_gateway_gps()        
         lista_end_devices = ler_end_devices()
 
         arquivo_entrada = ""
@@ -232,6 +234,24 @@ while True:
         # Inicializa dicionários organizados por ID do End Device
         dados_dev = {
             dev_id: {
+
+                "rssi_down": [],
+                "rssi_up": [],
+                "snr_down": [],
+                "snr_up": [],
+                "psr": [],
+                "taxa_teorica": [],
+                "taxa_calculada": [],
+                "gps_lat": [],
+                "gps_lon": [],
+                "gps_alt": [],
+                "distancia": [],
+                "total_pacotes": 0,
+                "pacotes_recebidos": 0,
+                "pacotes_perdidos": 0,
+                
+                '''
+                
                 "rssi_down": [],
                 "rssi_up": [],
                 "snr_down": [],
@@ -242,6 +262,7 @@ while True:
                 "total_pacotes": 0,
                 "pacotes_recebidos": 0,
                 "pacotes_perdidos": 0,
+                '''
             }
             for dev_id in lista_end_devices
         }
@@ -271,11 +292,11 @@ while True:
 
             pacote_recebido = 0
             for j in range(15):
-                if int(partes[23 + j]) != 9:
+                if int(partes[33 + j]) != 9:
                     pacote_recebido = 1
                     break
-
-            if pacote_recebido == 1:
+            UL_B8 = int(partes[40]) # Endereço do Gateway
+            if ((pacote_recebido == 1) and (UL_B8 == 0)):
                 dados_dev[dev_id]["pacotes_recebidos"] += 1
 
                 # RSSI / SNR Downlink e Uplink

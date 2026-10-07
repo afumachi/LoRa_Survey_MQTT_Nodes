@@ -14,11 +14,12 @@
 #include "RadioConfigOptimized_FIXED.h"
 
 #if defined(GPS_INTEGRADO)
+    #include <TinyGPS++.h>         // Inclui a Biblioteca GPS
+#endif
+#if defined(OLED_INTEGRADO)
     #include <Wire.h>              // Inclui a Biblioteca Wire para Oled
     #include <Adafruit_GFX.h>      // Inclui a Biblioteca GFX para Oled 
     #include <Adafruit_SSD1306.h>  // Inclui a Biblioteca OLED SSD1306
-    //#include <DHT.h>             // Inclui a Biblioteca para Sensor DHT22 temperatura e humidade
-    #include <TinyGPS++.h>         // Inclui a Biblioteca GPS
 #endif
 
 //=======================================================================
@@ -65,9 +66,28 @@
   #error "Por favor, definir a placa de hardware  (PKLORA_ESP32 ou PKLORA_NODEMCU) no topo deste código!"
 #endif
 
-#if defined(GPS_INTEGRADO)
+#if defined(OLED_INTEGRADO)
+  // OLED configuration
+  #define SCREEN_WIDTH 128 
+  #define SCREEN_HEIGHT 64 
+  #define OLED_RESET    -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+  Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-  /*
+#endif
+
+#if defined(GPS_INTEGRADO)
+  // GPS Setup (UART2)
+  TinyGPSPlus gps;
+  HardwareSerial SerialGPS(2); // Use UART2
+
+  // Controle de leitura do GPS no Void Loop
+  unsigned long millis_gps_controle = 0;
+  bool gps_satelite = false;
+#endif
+
+#if defined(DHT22_INTEGRADO)
+
+  #include <DHT.h>             // Inclui a Biblioteca para Sensor DHT22 temperatura e humidade
   // Pinos sensor de temperatura e umidade DHT22 AM2302
   #define DHTPIN 13     // Define o pino de dados para o sensor DHT
   #define DHTTYPE DHT22   // Especifica o tipo do sensor como DHT22
@@ -77,23 +97,10 @@
   unsigned long millis_dht22_controle = 0;
   float temperatura, umidade;
 
-  */
-
-  // OLED configuration
-  #define SCREEN_WIDTH 128 
-  #define SCREEN_HEIGHT 64 
-  #define OLED_RESET    -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-  Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
-  // GPS Setup (UART2)
-  TinyGPSPlus gps;
-  HardwareSerial SerialGPS(2); // Use UART2
-
-  // Controle de leitura do GPS no Void Loop
-  unsigned long millis_gps_controle = 0;
-  bool gps_satelite = false;
 
 #endif
+
+
 
 // ============================================================
 // CONFIGURAÇÕES LoRa OTIMIZADAS COM LUT

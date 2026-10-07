@@ -63,15 +63,16 @@
 #if defined(GPS_INTEGRADO)
 
   /*
-  // Pinos sensor de temperatura e umidade DHT22 AM2302
-  #define DHTPIN 13     // Define o pino de dados para o sensor DHT
-  #define DHTTYPE DHT22   // Especifica o tipo do sensor como DHT22
+  #if defined(DHT22_INTEGRADO)
+    // Pinos sensor de temperatura e umidade DHT22 AM2302
+    #define DHTPIN 13     // Define o pino de dados para o sensor DHT
+    #define DHTTYPE DHT22   // Especifica o tipo do sensor como DHT22
 
-  // Inicializa o sensor DHT
-  DHT dht(DHTPIN, DHTTYPE);
-  unsigned long millis_dht22_controle = 0;
-  float temperatura, umidade;
-
+    // Inicializa o sensor DHT
+    DHT dht(DHTPIN, DHTTYPE);
+    unsigned long millis_dht22_controle = 0;
+    float temperatura, umidade;
+  #endif
   */
 
   // OLED configuration

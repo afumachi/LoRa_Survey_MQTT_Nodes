@@ -10,8 +10,8 @@ void Net_radio_receive_DL() {
 // ====== ENVIA PACOTE CAMADA REDE
 void Net_radio_send_UL() {
 
-  PacoteUL[RECEIVER_ID] = PacoteDL[TRANSMITTER_ID];   // Inverte os endereços de Origem e Destino no pacote de UL
-  PacoteUL[TRANSMITTER_ID] = ID_sensor;                   // Inverte os endereços de Origem e Destino no pacote de UL
+  PacoteUL[8] = PacoteDL[10];   // Inverte os endereços de Origem e Destino no pacote de UL
+  PacoteUL[10] = ID_sensor;     // Inverte os endereços de Origem e Destino no pacote de UL
 
   Mac_radio_send_UL();
 }

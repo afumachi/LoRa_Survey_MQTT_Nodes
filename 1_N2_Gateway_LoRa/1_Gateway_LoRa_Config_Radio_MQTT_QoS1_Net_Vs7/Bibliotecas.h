@@ -44,7 +44,7 @@
 // Identificação do Nó Sensor e Tamanho de Pacote
 
 #define MY_ID 0
-#define TAMANHO_PACOTE 20
+#define TAMANHO_PACOTE 30
 byte PacoteDL[TAMANHO_PACOTE];
 byte PacoteUL[TAMANHO_PACOTE];
 
