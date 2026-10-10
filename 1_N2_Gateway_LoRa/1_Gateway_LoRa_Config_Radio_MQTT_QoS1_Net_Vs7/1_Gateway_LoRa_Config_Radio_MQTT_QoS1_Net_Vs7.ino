@@ -12,9 +12,9 @@
 
 // Remova o comentário da linha referente ao módulo que você está utilizando e comente a outro
 
-//#define PKLORA_ESP32 // #define PKLORA_ESP32
+#define PKLORA_ESP32 // #define PKLORA_ESP32
 //#define AFLORA_ESP32 // #define AFLORA_ESP32 fabricação própria
-#define PKLORA_NODEMCU // #define PKLORA_NODEMCU
+//#define PKLORA_NODEMCU // #define PKLORA_NODEMCU
 
 //=======================================================================
 // 2 - Biblioteca - chama o arquivo Biblioteca.h
@@ -26,21 +26,21 @@
 // 3 - Configurações Broker MQTT
 // =====================================================================
 // Configurações do Broker Mosquitto (Usando o broker público oficial)
-// const char* MQTT_BROKER = "test.mosquitto.org";
+const char* MQTT_BROKER = "test.mosquitto.org";
 
 // Configurações do Broker HiveMQ (Usando o broker público oficial)
 //const char* MQTT_BROKER   = "broker.hivemq.com";
 
 // Configurações do Broker Smart TpM (Usando o broker público Smart TpM)
-const char* MQTT_BROKER   = "www.tpm.dev.br";
+//const char* MQTT_BROKER   = "www.tpm.dev.br";
 
 const int   MQTT_PORT     = 1883;
 
 //const char* TOPIC_DL      = "mot_lora_mqtt_FEE23/gateway/downlink";
 //const char* TOPIC_UL      = "mot_lora_mqtt_FEE23/gateway/uplink";
 
-const char* TOPIC_DL      = "mot_mqtt_194104/gateway/downlink";  // Python → ESP32
-const char* TOPIC_UL      = "mot_mqtt_194104/gateway/uplink";    // ESP32  → Python
+const char* TOPIC_DL      = "mot_aaf_194104/gateway/downlink";  // Python → ESP32
+const char* TOPIC_UL      = "mot_aaf_194104/gateway/uplink";    // ESP32  → Python
 String CLIENT_ID ;         // ID único no broker
 
 // QoS usado nos dois sentidos (DL e UL). QoS1 = "at least once"
@@ -81,15 +81,16 @@ MQTTClient mqttClient(256);   // buffer de 256 bytes (read/write)
 
 // Cofiguração das redes Wi-Fi 2.4GHz disponíveis
 void conectar_wifi_multi() {
-
+  wifiMulti.addAP("COLETTI_ADV_CRIS", "45384609");
   // Cadastre quantas redes você quiser (SSID, Senha)
+	wifiMulti.addAP("COLETTI_ext", "1145384609");
 	wifiMulti.addAP("2.4G COLETTI", "1145384609");
 
   wifiMulti.addAP("MJCA_FUNDOS", "21092429MJC@");
 
 
-	wifiMulti.addAP("COLETTI_ext", "1145384609");
-  wifiMulti.addAP("COLETTI_ADV_CRIS", "45384609");
+
+
 
 	wifiMulti.addAP("aafwifi", "aaf12345678");
 	wifiMulti.addAP("CHACARA BBC", "Ailton1960#");
@@ -196,7 +197,7 @@ void setup() {
   //  --- Pisca Led verde  --- Sucesso ao Iniciar 
   digitalWrite(LED_VERMELHO_PIN, HIGH);  // DESLIGA O LED VERDE - DEVE SER LOW DURANTE BOOT
   digitalWrite(LED_VERDE_PIN, HIGH);  // 
-  delay(1000);
+  delay(2000);
   digitalWrite(LED_VERMELHO_PIN, LOW); 
   digitalWrite(LED_VERDE_PIN, LOW);  //
 
@@ -240,15 +241,17 @@ void loop() {
   if (!mqttClient.connected()) {
     conectar_mqtt();
   }
+
   else{
     if (st_led_vermelho == 1){
-      digitalWrite(LED_VERMELHO_PIN, LOW);
-      digitalWrite(LED_VERDE_PIN, LOW);
+      //digitalWrite(LED_VERMELHO_PIN, LOW);
+      //digitalWrite(LED_VERDE_PIN, LOW);
     }
     else{
-      digitalWrite(LED_VERMELHO_PIN, HIGH);
-      digitalWrite(LED_VERDE_PIN, HIGH);
+      //digitalWrite(LED_VERMELHO_PIN, HIGH);
+      //digitalWrite(LED_VERDE_PIN, HIGH);
     }
+
   }
 
   mqttClient.loop();   // processa envio/recebimento e handshakes de QoS1/2

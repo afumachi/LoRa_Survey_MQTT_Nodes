@@ -11,7 +11,7 @@
 
 // Remova o comentário da linha referente ao módulo que você está utilizando e comente a outro
 
-#define PKLORA_ESP32 // HARDWARE COM ESP32
+#define AFLORA_ESP32 // HARDWARE COM ESP32
 //#define PKLORA_NODEMCU // HARDWARE COM ESP12E - NODEMCU
 
 // Caso tenha sensor GPS integrado ao Módulo
@@ -85,6 +85,13 @@ int luminosidade; // Variável que vai receber o valor da luminosidade entre 0 e
 uint8_t feedback_led_amarelo = 0;
 
 
+// Variáveis de controle de tempo
+unsigned long tempoAnterior = 0;   // Armazena o último momento em que o LED mudou de estado
+const long intervalo = 100;        // Intervalo de tempo desejado (100 milissegundos)
+
+// Variável para armazenar o estado atual do LED
+int estadoLed = LOW;
+
 // 1. Criamos uma estrutura para expor o ponteiro de função privada em tempo de compilação
 template<typename Tag, typename Tag::type M>
 struct ObtorPrivado {
@@ -127,8 +134,6 @@ void setup() {
     analogSetAttenuation(ADC_11db);
   #endif
 
-  pinMode(LDR_PIN, INPUT);
-
   // Garante que os LEDs iniciem desligados
   digitalWrite(LED_VERMELHO_PIN, LOW);
   digitalWrite(LED_VERDE_PIN, LOW);
@@ -161,7 +166,7 @@ void setup() {
 
 
     // --- Inicialização Módulo RF95 (LoRa) ---
-  #if defined(PKLORA_ESP32)
+  #if defined(AFLORA_ESP32)
     // 1. Remapeia e inicializa o barramento SPI com os pinos do seu Kit
     SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, NSS_PIN);
   #endif
@@ -321,32 +326,25 @@ void loop() {
 
   }
 
-  // Liga um LED a cada 500 [ms]
-  unsigned long tempo_led_ms = 1000UL;
-  
 
-  if (millis() - millis_mqtt_controle >= tempo_led_ms) {        
+  // Obtém o tempo atual desde que o ESP32 foi ligado
+  unsigned long tempoAtual = millis();
 
-    st_led_vermelho = 1;
-    // Zera contagem do tempo de controle MQTT para tempo de ESP32 rodando
-    millis_mqtt_controle = millis(); 
+  // Verifica se a diferença entre o tempo atual e o último registro é maior ou igual ao intervalo
+  if (tempoAtual - tempoAnterior >= intervalo) {
+    // Salva o momento atual como o último momento modificado
+    tempoAnterior = tempoAtual;
 
-  }
-  else {
-    st_led_vermelho = 0;
-  }
-  
-    if (st_led_vermelho == 1){
-      //digitalWrite(LED_VERMELHO_PIN, LOW);
-      //digitalWrite(LED_VERDE_PIN, LOW);
-    }
-    else{
-      //digitalWrite(LED_VERMELHO_PIN, HIGH);
-      //digitalWrite(LED_VERDE_PIN, HIGH);
+    // Inverte o estado do LED (se estava ligado, desliga; se estava desligado, liga)
+    if (estadoLed == LOW) {
+      estadoLed = HIGH;
+    } else {
+      estadoLed = LOW;
     }
 
-
-
+    // Aplica o novo estado ao pino do LED
+    digitalWrite(LED_VERMELHO_PIN, estadoLed);
+  }
 
 }
 

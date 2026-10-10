@@ -116,7 +116,7 @@ valor_novo_codingrate      = pgm_read_byte(&(RADIO_CONFIG_LUT[radio_config_index
     valor_novo_codingrate = PacoteDL[2];         // Byte DL[2] valor de rádio LoRa de CodingRate
 */
 
-    valor_novo_potencia_radio = 2;//PacoteDL[3];     // Byte DL[3] valor de rádio LoRa de Potência de Rádio LoRa
+    //valor_novo_potencia_radio = 2;//PacoteDL[3];     // Byte DL[3] valor de rádio LoRa de Potência de Rádio LoRa
     tempo_radio = PacoteDL[6];                   // Byte DL[6] Recebe tempo de radio tx rx
     recebe_comando_nova_radio = PacoteDL[7];     // Byte DL[7] Recebe comando de reconfiguração de Rádio LoRa
 
@@ -381,7 +381,7 @@ void AplicarConfiguracoesRadio() {
   if (confirma_novo_radio == 1) {
 
     LoRa.sleep();                                         // Coloca em sleep para garantir a mudança de parâmetros
-    LoRa.setTxPower(valor_novo_potencia_radio);           // Potência de Transmissão (Configurado em bibliotecas.h)
+    //LoRa.setTxPower(valor_novo_potencia_radio);           // Potência de Transmissão (Configurado em bibliotecas.h)
     LoRa.setSpreadingFactor(valor_novo_spreadingfactor);  // Fator de Espalhamento  (Configurado em bibliotecas.h)
     LoRa.setSignalBandwidth(valor_novo_bandwidth);        // Banda do Sinal (Configurado em bibliotecas.h)
     LoRa.setCodingRate4(valor_novo_codingrate);           // Coding Rate  (Configurado em bibliotecas.h)

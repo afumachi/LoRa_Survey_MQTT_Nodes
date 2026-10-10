@@ -44,7 +44,7 @@
 // Identificação do Nó Sensor e Tamanho de Pacote
 
 #define MY_ID 0
-#define TAMANHO_PACOTE 30
+#define TAMANHO_PACOTE 20
 byte PacoteDL[TAMANHO_PACOTE];
 byte PacoteUL[TAMANHO_PACOTE];
 
@@ -52,7 +52,7 @@ byte PacoteUL[TAMANHO_PACOTE];
 #define TAXA_SERIAL 115200
 
 
-#if defined(PKLORAA_ESP32)
+#if defined(PKLORA_ESP32)
   // ---- DECLARAÇÃO DIAGRAMA DE PINOS DO PROJETO ----
   // Pinos utilizados para comunicação SPI entre ESP32 e RFM95 - Módulo LoRa
 

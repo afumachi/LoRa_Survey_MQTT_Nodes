@@ -38,8 +38,8 @@ global sf_csv, bw_csv, cr_csv, pw_csv, sf_csv_new, bw_csv_new, cr_csv_new
 
 # ===== Configurações MQTT =====
 #BROKER        = "broker.hivemq.com"
-#BROKER        = "test.mosquitto.org"
-BROKER        = "www.tpm.dev.br"
+BROKER        = "test.mosquitto.org"
+#BROKER        = "www.tpm.dev.br"
 
 PORTA_MQTT    = 1883
 
@@ -48,8 +48,8 @@ PORTA_MQTT    = 1883
 #TOPIC_DL      = "mot_lora_mqtt_FEE23/gateway/downlink"  #// Python → ESP32
 #TOPIC_UL      = "mot_lora_mqtt_FEE23/gateway/uplink"    #// ESP32  → Python
 
-TOPIC_DL      = "mot_lora_194104/gateway/downlink"  # Python → ESP32
-TOPIC_UL      = "mot_lora_194104/gateway/uplink"    # ESP32  → Python
+TOPIC_DL      = "mot_aaf_194104/gateway/downlink"  # Python → ESP32
+TOPIC_UL      = "mot_aaf_194104/gateway/uplink"    # ESP32  → Python
 
 # QoS usado nos dois sentidos (DL e UL). QoS1 = "at least once": o broker
 # confirma (PUBACK) e há retransmissão se a confirmação não chegar.
@@ -1019,7 +1019,7 @@ try:
 
                     downlink()
                                           
-                    time.sleep(toa_entre_medidas/2)
+                    time.sleep(toa_entre_medidas)
 
                     uplink()
 
